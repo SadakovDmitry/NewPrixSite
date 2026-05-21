@@ -260,7 +260,7 @@ function ThreeKnightScene() {
       new THREE.CircleGeometry(1.75, 72),
       new THREE.MeshBasicMaterial({ color: '#090909', transparent: true, opacity: 0.16 }),
     );
-    shadowPlane.position.set(0, -2.16, -0.12);
+    shadowPlane.position.set(0, -2.86, -0.12);
     shadowPlane.rotation.x = -Math.PI / 2;
     group.add(shadowPlane);
 
