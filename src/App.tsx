@@ -256,14 +256,6 @@ function ThreeKnightScene() {
     rimLight.position.set(2.6, -0.4, 2.6);
     scene.add(rimLight);
 
-    const shadowPlane = new THREE.Mesh(
-      new THREE.CircleGeometry(1.75, 72),
-      new THREE.MeshBasicMaterial({ color: '#090909', transparent: true, opacity: 0.16 }),
-    );
-    shadowPlane.position.set(0, -2.86, -0.12);
-    shadowPlane.rotation.x = -Math.PI / 2;
-    group.add(shadowPlane);
-
     const pointer = { x: 0, y: 0 };
     const target = { x: 0, y: 0 };
 
