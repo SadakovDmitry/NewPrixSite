@@ -42,33 +42,6 @@ const portfolio = [
   },
 ];
 
-const testimonials = [
-  {
-    quote:
-      'PRIX CLUB умеет переводить сложную деловую экспертизу на язык медиа. После запуска кампании нас стали чаще приглашать в отраслевые обсуждения.',
-    author: 'Директор по развитию',
-    company: 'B2B-проект',
-  },
-  {
-    quote:
-      'Команда взяла на себя стратегию, тексты, работу с площадками и контроль публикаций. Мы получили понятную систему репутационного присутствия.',
-    author: 'Основатель',
-    company: 'Технологическая компания',
-  },
-  {
-    quote:
-      'Сильная сторона агентства - аккуратная работа с смыслами. Они не делают шум ради шума, а собирают доверие вокруг компании.',
-    author: 'PR-куратор',
-    company: 'Отраслевое объединение',
-  },
-  {
-    quote:
-      'Нам помогли выстроить коммуникации для руководителя: от позиционирования до публикаций и выступлений. Все было спокойно, точно и в срок.',
-    author: 'Исполнительный директор',
-    company: 'Сервисная группа',
-  },
-];
-
 const team = [
   { name: 'Полина', role: 'CEO', initials: 'П' },
   { name: 'Владимир', role: 'PR-директор, управляет IT-отделом', initials: 'В' },
@@ -76,84 +49,81 @@ const team = [
   { name: 'Мария', role: 'SMM, делает бренд заметным в соцсетях', initials: 'М' },
 ];
 
-const news = [
-  {
-    title: 'Круглый стол ассоциации',
-    text: 'Собираем экспертов, модерируем повестку и превращаем событие в медийный повод.',
-  },
-  {
-    title: 'Новости компании',
-    text: 'Упаковываем внутренние изменения в понятные инфоповоды для рынка и партнеров.',
-  },
-  {
-    title: 'Выходы в СМИ',
-    text: 'Готовим комментарии, интервью и экспертные материалы для нужных аудиторий.',
-  },
-];
+function splitStatValue(value: string) {
+  const match = value.match(/^(\d+)(.*)$/);
 
-function KnightMark() {
+  if (!match) {
+    return { target: 0, suffix: value };
+  }
+
+  return {
+    target: Number(match[1]),
+    suffix: match[2],
+  };
+}
+
+function AnimatedStatCard({ value, label }: { value: string; label: string }) {
+  const cardRef = useRef<HTMLElement | null>(null);
+  const [hasEntered, setHasEntered] = useState(false);
+  const [displayValue, setDisplayValue] = useState(0);
+  const { target, suffix } = splitStatValue(value);
+
+  useEffect(() => {
+    const card = cardRef.current;
+
+    if (!card) {
+      return undefined;
+    }
+
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    const runCounter = () => {
+      setHasEntered(true);
+
+      if (prefersReducedMotion) {
+        setDisplayValue(target);
+        return;
+      }
+
+      const duration = 1100;
+      const startedAt = performance.now();
+
+      const tick = (now: number) => {
+        const progress = Math.min((now - startedAt) / duration, 1);
+        const eased = 1 - (1 - progress) ** 3;
+        setDisplayValue(Math.round(target * eased));
+
+        if (progress < 1) {
+          window.requestAnimationFrame(tick);
+        }
+      };
+
+      window.requestAnimationFrame(tick);
+    };
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          runCounter();
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.35 },
+    );
+
+    observer.observe(card);
+
+    return () => observer.disconnect();
+  }, [target]);
+
   return (
-    <svg className="knight-mark" viewBox="0 0 320 360" role="img" aria-label="3D logo PRIX CLUB">
-      <defs>
-        <linearGradient id="goldFace" x1="72" y1="40" x2="245" y2="302" gradientUnits="userSpaceOnUse">
-          <stop stopColor="#fff2bd" />
-          <stop offset="0.34" stopColor="#d7a64e" />
-          <stop offset="0.68" stopColor="#7c4b20" />
-          <stop offset="1" stopColor="#f6d88b" />
-        </linearGradient>
-        <linearGradient id="goldEdge" x1="65" y1="62" x2="277" y2="246" gradientUnits="userSpaceOnUse">
-          <stop stopColor="#5a2f15" />
-          <stop offset="0.48" stopColor="#f6d88b" />
-          <stop offset="1" stopColor="#2b160c" />
-        </linearGradient>
-        <radialGradient id="shine" cx="0" cy="0" r="1" gradientTransform="matrix(118 118 -118 118 130 78)" gradientUnits="userSpaceOnUse">
-          <stop stopColor="#ffffff" stopOpacity="0.86" />
-          <stop offset="1" stopColor="#ffffff" stopOpacity="0" />
-        </radialGradient>
-        <filter id="softShadow" x="-20%" y="-20%" width="140%" height="150%">
-          <feDropShadow dx="0" dy="22" stdDeviation="18" floodColor="#000000" floodOpacity="0.55" />
-        </filter>
-      </defs>
-
-      <ellipse cx="162" cy="312" rx="118" ry="30" fill="#000" opacity="0.28" />
-      <g filter="url(#softShadow)">
-        <path
-          d="M92 298h154c13 0 24-11 24-24v-15c0-12-9-22-21-24l-27-4c-4-34-15-64-33-91l31-12c9-4 14-14 10-23l-9-24c-4-10-15-15-25-10l-18 8c-18-22-41-35-70-38-11-1-20 8-20 19v21l-23 21c-8 8-11 20-7 31l15 39-25 24c-7 7-8 18-1 26l33 37-10 25c-4 15 6 29 21 29Z"
-          fill="url(#goldFace)"
-        />
-        <path
-          d="M118 82c46 9 78 42 96 99 8 25 12 50 12 76M92 298h154c13 0 24-11 24-24v-15c0-12-9-22-21-24l-47-7M91 117l60 14M74 194l88 15M177 79l-35 56"
-          fill="none"
-          stroke="url(#goldEdge)"
-          strokeLinecap="round"
-          strokeWidth="12"
-          opacity="0.7"
-        />
-        <path
-          d="M116 99c23 2 43 13 61 33l-29 10c-17-7-35-9-55-5l-8-20c8-10 18-16 31-18Z"
-          fill="#211008"
-          opacity="0.55"
-        />
-        <circle cx="151" cy="111" r="8" fill="#170c08" />
-        <path
-          d="M83 296h184c14 0 26 11 26 25v11H57v-10c0-15 11-26 26-26Z"
-          fill="url(#goldEdge)"
-        />
-        <path
-          d="M95 302h142c13 0 24 10 24 23v4H70v-4c0-13 11-23 25-23Z"
-          fill="url(#goldFace)"
-          opacity="0.85"
-        />
-        <path
-          d="M85 80c40-38 95-48 139-12 18 15 27 31 33 50"
-          fill="none"
-          stroke="url(#shine)"
-          strokeLinecap="round"
-          strokeWidth="26"
-          opacity="0.55"
-        />
-      </g>
-    </svg>
+    <article ref={cardRef} className={hasEntered ? 'is-visible' : ''}>
+      <strong>
+        {displayValue}
+        {suffix}
+      </strong>
+      <span>{label}</span>
+    </article>
   );
 }
 
@@ -311,222 +281,6 @@ function ThreeKnightScene() {
   return <div className="three-knight" ref={mountRef} aria-hidden="true" />;
 }
 
-type DesignVariant = 'cinematic' | 'prhub';
-
-function CinematicPrixSite() {
-  return (
-    <main className="prix-site">
-      <header className="site-header" aria-label="Основная навигация">
-        <a className="brand" href="#top" aria-label="PRIX CLUB">
-          <span className="brand-emblem" aria-hidden="true">P</span>
-          <span>PRIX CLUB</span>
-        </a>
-
-        <nav>
-          <a href="#agency">Агентство</a>
-          <a href="#portfolio">Портфолио</a>
-          <a href="#reviews">Отзывы</a>
-          <a href="#team">Команда</a>
-        </nav>
-
-        <a className="nav-cta" href="#contact">Обсудить задачу</a>
-      </header>
-
-      <section className="hero" id="top" aria-labelledby="hero-title">
-        <div className="cinema-lines" aria-hidden="true" />
-        <div className="hero-content">
-          <p className="eyebrow">Коммуникационное бутик-агентство полного цикла</p>
-          <h1 id="hero-title">Создаем доверие через медиа-присутствие</h1>
-          <p className="hero-lede">
-            Формируем и управляем репутацией компаний и персон в медиаполе России
-            и стран БРИКС. Стратегия, PR, публикации, события и сопровождение под ключ.
-          </p>
-
-          <div className="hero-actions">
-            <a className="button button-primary" href="#contact">Рассказать о задаче</a>
-            <a className="button button-ghost" href="#portfolio">Смотреть кейсы</a>
-          </div>
-
-          <div className="contact-pills" aria-label="Быстрые контакты">
-            <span>Связаться:</span>
-            <a href="#contact">MAX</a>
-            <a href="https://t.me/" target="_blank" rel="noreferrer">Telegram</a>
-            <a href="mailto:hello@prix.club">Почта</a>
-          </div>
-        </div>
-
-        <div className="hero-visual" aria-hidden="true">
-          <div className="knight-stage">
-            <KnightMark />
-          </div>
-          <div className="signal-card">
-            <span>Медиа-охват</span>
-            <strong>100M+</strong>
-            <p>ежемесячно через публикации, события и экспертное присутствие</p>
-          </div>
-        </div>
-
-        <div className="hero-ticker" aria-hidden="true">
-          <span>PR strategy</span>
-          <span>Media relations</span>
-          <span>GR communications</span>
-          <span>BRICS markets</span>
-          <span>Reputation management</span>
-        </div>
-      </section>
-
-      <section className="stats-section" id="agency" aria-label="Агентство в цифрах">
-        {stats.map((item) => (
-          <div className="stat-card" key={item.label}>
-            <strong>{item.value}</strong>
-            <span>{item.label}</span>
-          </div>
-        ))}
-      </section>
-
-      <section className="trust-section" aria-labelledby="trust-title">
-        <div className="section-copy">
-          <p className="section-kicker">Доверие</p>
-          <h2 id="trust-title">Благодарственные письма, сертификаты и подтвержденная экспертиза.</h2>
-        </div>
-        <div className="certificate-grid">
-          {certificates.map((item) => (
-            <article className="certificate-card" key={item}>
-              <span>Letter</span>
-              <strong>{item}</strong>
-              <p>Подтверждение сотрудничества, профессионального вклада и результата.</p>
-            </article>
-          ))}
-        </div>
-      </section>
-
-      <section className="portfolio-section" id="portfolio" aria-labelledby="portfolio-title">
-        <div className="section-copy wide">
-          <p className="section-kicker">Портфолио</p>
-          <h2 id="portfolio-title">Публикации и медийные выходы, собранные вокруг репутационной задачи.</h2>
-        </div>
-
-        <div className="portfolio-grid">
-          {portfolio.map((item, index) => (
-            <article className={index === 0 ? 'case-card featured-case' : 'case-card'} key={item.company}>
-              <div className="case-logo">{item.company.slice(0, 2)}</div>
-              <div>
-                <p>{item.type}</p>
-                <h3>{item.company}</h3>
-              </div>
-              <ul>
-                {item.publications.map((publication) => (
-                  <li key={publication}>{publication}</li>
-                ))}
-              </ul>
-            </article>
-          ))}
-        </div>
-      </section>
-
-      <section className="reviews-section" id="reviews" aria-labelledby="reviews-title">
-        <div className="reviews-sticky">
-          <p className="section-kicker">Отзывы</p>
-          <h2 id="reviews-title">Залипательный виджет доверия.</h2>
-          <p>
-            Отзывы раскрывают не только результат, но и стиль работы: спокойная
-            коммуникация, точная упаковка смыслов и контроль медиаполя.
-          </p>
-        </div>
-
-        <div className="review-stack">
-          {testimonials.map((item, index) => (
-            <blockquote className="review-card" key={item.quote}>
-              <span>{String(index + 1).padStart(2, '0')}</span>
-              <p>{item.quote}</p>
-              <footer>
-                <strong>{item.author}</strong>
-                <small>{item.company}</small>
-              </footer>
-            </blockquote>
-          ))}
-        </div>
-      </section>
-
-      <section className="team-section" id="team" aria-labelledby="team-title">
-        <div className="section-copy wide">
-          <p className="section-kicker">Ядро компании</p>
-          <h2 id="team-title">Команда, которая соединяет PR, GR, SMM и операционное управление.</h2>
-        </div>
-
-        <div className="team-grid">
-          {team.map((member) => (
-            <article className="team-card" key={member.name}>
-              <div className="portrait" aria-hidden="true">
-                <span>{member.initials}</span>
-              </div>
-              <h3>{member.name}</h3>
-              <p>{member.role}</p>
-            </article>
-          ))}
-        </div>
-      </section>
-
-      <section className="news-section" aria-labelledby="news-title">
-        <div className="section-copy">
-          <p className="section-kicker">Новости о нас</p>
-          <h2 id="news-title">События, медиа и поводы, которые продолжают работать после публикации.</h2>
-        </div>
-
-        <div className="news-grid">
-          {news.map((item) => (
-            <article className="news-card" key={item.title}>
-              <span>News</span>
-              <h3>{item.title}</h3>
-              <p>{item.text}</p>
-            </article>
-          ))}
-        </div>
-      </section>
-
-      <section className="contact-section" id="contact" aria-labelledby="contact-title">
-        <div>
-          <p className="section-kicker">Обратная связь</p>
-          <h2 id="contact-title">Расскажите о вашей задаче. Мы предложим репутационный маршрут.</h2>
-          <p>
-            Можно написать в MAX, Telegram, на почту или оставить заявку в форме.
-            Мы свяжемся и уточним цель, аудитории, сроки и желаемый медийный результат.
-          </p>
-        </div>
-
-        <form className="contact-form">
-          <label>
-            Имя
-            <input type="text" name="name" placeholder="Как к вам обращаться" />
-          </label>
-          <label>
-            Контакт
-            <input type="text" name="contact" placeholder="Телефон, Telegram или email" />
-          </label>
-          <label>
-            Задача
-            <textarea name="task" placeholder="Что нужно усилить: компанию, персону, событие, запуск" />
-          </label>
-          <button className="button button-primary" type="submit">Отправить заявку</button>
-        </form>
-      </section>
-
-      <footer className="footer">
-        <div>
-          <strong>PRIX CLUB</strong>
-          <p>Формирование и управление репутацией в медиаполе.</p>
-        </div>
-        <nav aria-label="Документы">
-          <a href="mailto:hello@prix.club">hello@prix.club</a>
-          <a href="#contact">Адрес и контакты</a>
-          <a href="#contact">Пользовательское соглашение</a>
-          <a href="#contact">Cookies</a>
-        </nav>
-      </footer>
-    </main>
-  );
-}
-
 const prhubServices = [
   {
     title: 'Influencers collaborations',
@@ -565,7 +319,77 @@ const prhubApproach = [
 
 const prhubMedia = ['РБК', 'Forbes', 'Ведомости', 'Коммерсантъ', 'BRICS Today', 'VC.ru'];
 
+const prhubTestimonials = [
+  {
+    label: '01 / отзыв клиента',
+    quote:
+      'Здесь будет реальный отзыв клиента о том, что изменилось после PR-сопровождения.',
+    source: 'Клиент / отрасль / роль',
+  },
+  {
+    label: '02 / отзыв клиента',
+    quote:
+      'Короткая цитата клиента про работу команды, скорость и понятность процесса.',
+    source: 'Клиент / компания',
+  },
+  {
+    label: '03 / отзыв клиента',
+    quote:
+      'Цитата про медийное присутствие, доверие аудитории и экспертность руководителя.',
+    source: 'Клиент / направление',
+  },
+  {
+    label: '04 / отзыв клиента',
+    quote:
+      'Отзыв про подготовку интервью, экспертную позицию и сопровождение публикации.',
+    source: 'Клиент / медиа-задача',
+  },
+  {
+    label: '05 / отзыв клиента',
+    quote:
+      'Отзыв про запуск, стратегию коммуникаций и долгосрочную работу с репутацией.',
+    source: 'Клиент / проект',
+  },
+];
+
 function PrhubInspiredSite() {
+  const [activeCaseIndex, setActiveCaseIndex] = useState(0);
+  const [caseDirection, setCaseDirection] = useState<'next' | 'prev'>('next');
+  const [caseAutoDelay, setCaseAutoDelay] = useState(5000);
+  const testimonialScrollerRef = useRef<HTMLDivElement | null>(null);
+  const activeCase = portfolio[activeCaseIndex];
+  const secondaryCases = portfolio.filter((_, index) => index !== activeCaseIndex);
+  const selectCase = (index: number) => {
+    setCaseDirection(index > activeCaseIndex ? 'next' : 'prev');
+    setCaseAutoDelay(10000);
+    setActiveCaseIndex(index);
+  };
+  const scrollTestimonials = (direction: -1 | 1) => {
+    const scroller = testimonialScrollerRef.current;
+
+    if (!scroller) {
+      return;
+    }
+
+    const slide = scroller.querySelector<HTMLElement>('.testimonial-slide');
+    const distance = slide ? slide.offsetWidth + 16 : scroller.clientWidth * 0.86;
+
+    scroller.scrollBy({
+      left: direction * distance,
+      behavior: 'smooth',
+    });
+  };
+
+  useEffect(() => {
+    const timeoutId = window.setTimeout(() => {
+      setCaseDirection('next');
+      setCaseAutoDelay(5000);
+      setActiveCaseIndex((currentIndex) => (currentIndex + 1) % portfolio.length);
+    }, caseAutoDelay);
+
+    return () => window.clearTimeout(timeoutId);
+  }, [activeCaseIndex, caseAutoDelay]);
+
   return (
     <main className="prhub-page">
       <header className="prhub-header" aria-label="Навигация PRIX CLUB">
@@ -619,10 +443,7 @@ function PrhubInspiredSite() {
         </h2>
         <div className="prhub-stat-row">
           {stats.map((item) => (
-            <article key={item.label}>
-              <strong>{item.value}</strong>
-              <span>{item.label}</span>
-            </article>
+            <AnimatedStatCard key={item.label} value={item.value} label={item.label} />
           ))}
         </div>
       </section>
@@ -633,13 +454,25 @@ function PrhubInspiredSite() {
           <h2 id="prhub-services-title">Что мы делаем</h2>
         </div>
 
-        <div className="prhub-services-list">
-          {prhubServices.map((service) => (
-            <article key={service.title}>
-              <p>{service.text}</p>
-              <h3>{service.title}</h3>
-            </article>
-          ))}
+        <div className="service-studio">
+          <div className="service-orbit" aria-hidden="true">
+            <span className="orbit-core">PR</span>
+            {prhubServices.slice(0, 5).map((service, index) => (
+              <span className={`orbit-track orbit-track-${index + 1}`} key={service.title}>
+                <span className="orbit-chip">{service.title.split(' ')[0]}</span>
+              </span>
+            ))}
+          </div>
+
+          <div className="service-manifest">
+            {prhubServices.map((service, index) => (
+              <article key={service.title}>
+                <span>{String(index + 1).padStart(2, '0')}</span>
+                <h3>{service.title}</h3>
+                <p>{service.text}</p>
+              </article>
+            ))}
+          </div>
         </div>
       </section>
 
@@ -649,18 +482,71 @@ function PrhubInspiredSite() {
           <h2 id="prhub-cases-title">Публикации, события и репутационные поводы.</h2>
         </div>
 
-        <div className="prhub-case-board">
-          {portfolio.map((item) => (
-            <article key={item.company}>
-              <div className="prhub-case-logo">{item.company}</div>
-              <p>{item.type}</p>
-              <ul>
-                {item.publications.slice(0, 2).map((publication) => (
-                  <li key={publication}>{publication}</li>
-                ))}
-              </ul>
-            </article>
-          ))}
+        <div className="case-editorial">
+          <article className={`case-feature case-feature-${caseDirection}`} key={activeCase.company}>
+            <span>Featured media room</span>
+            <h3>{activeCase.company}</h3>
+            <p>{activeCase.type}</p>
+            <ul>
+              {activeCase.publications.map((publication) => (
+                <li key={publication}>{publication}</li>
+              ))}
+            </ul>
+          </article>
+
+          <div className="case-strips">
+            {secondaryCases.map((item) => {
+              const originalIndex = portfolio.findIndex((caseItem) => caseItem.company === item.company);
+
+              return (
+                <button
+                  className="case-strip-button"
+                  key={item.company}
+                  type="button"
+                  onClick={() => selectCase(originalIndex)}
+                >
+                  <div>
+                    <span>{String(originalIndex + 1).padStart(2, '0')}</span>
+                    <h3>{item.company}</h3>
+                  </div>
+                  <p>{item.type}</p>
+                  <small>{item.publications[0]}</small>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      <section className="prhub-testimonials" aria-labelledby="prhub-testimonials-title">
+        <div className="prhub-section-title">
+          <p>Client voices</p>
+          <h2 id="prhub-testimonials-title">Отзывы клиентов</h2>
+        </div>
+
+        <div className="testimonial-board">
+          <div className="testimonial-actions" aria-label="Навигация по отзывам">
+            <button type="button" onClick={() => scrollTestimonials(-1)} aria-label="Предыдущий отзыв">
+              ←
+            </button>
+            <button type="button" onClick={() => scrollTestimonials(1)} aria-label="Следующий отзыв">
+              →
+            </button>
+            <a href="mailto:hello@prix.club?subject=Отзыв%20о%20PRIX%20CLUB">оставить отзыв</a>
+          </div>
+
+          <div className="testimonial-rail" ref={testimonialScrollerRef}>
+            {prhubTestimonials.map((testimonial, index) => (
+              <blockquote className="testimonial-slide" key={testimonial.label}>
+                <span>{testimonial.label}</span>
+                <p>{testimonial.quote}</p>
+                <footer>
+                  <strong>{String(index + 1).padStart(2, '0')}</strong>
+                  {testimonial.source}
+                </footer>
+              </blockquote>
+            ))}
+          </div>
         </div>
       </section>
 
@@ -670,7 +556,7 @@ function PrhubInspiredSite() {
           <h2 id="prhub-approach-title">Процесс, который превращает экспертизу в медийное присутствие.</h2>
         </div>
 
-        <div className="prhub-approach-grid">
+        <div className="route-map">
           {prhubApproach.map(([num, title, text]) => (
             <article key={num}>
               <span>{num}</span>
@@ -686,7 +572,7 @@ function PrhubInspiredSite() {
           <p className="prhub-mini">We care about people, the process, and the result</p>
           <h2 id="prhub-team-title">Ядро компании</h2>
         </div>
-        <div className="prhub-team-strip">
+        <div className="team-roster">
           {team.map((member) => (
             <article key={member.name}>
               <div className="prhub-person-photo">{member.initials}</div>
@@ -699,7 +585,7 @@ function PrhubInspiredSite() {
 
       <section className="prhub-awards" aria-labelledby="prhub-awards-title">
         <h2 id="prhub-awards-title">Наши проекты получают благодарственные письма, сертификаты и отраслевое признание.</h2>
-        <div>
+        <div className="document-stack">
           {certificates.map((item) => (
             <span key={item}>{item}</span>
           ))}
@@ -727,42 +613,8 @@ function PrhubInspiredSite() {
   );
 }
 
-function VariantSwitcher({
-  variant,
-  setVariant,
-}: {
-  variant: DesignVariant;
-  setVariant: (variant: DesignVariant) => void;
-}) {
-  return (
-    <div className="variant-switcher" aria-label="Переключение вариантов дизайна">
-      <button
-        className={variant === 'cinematic' ? 'is-active' : ''}
-        type="button"
-        onClick={() => setVariant('cinematic')}
-      >
-        Вариант 1
-      </button>
-      <button
-        className={variant === 'prhub' ? 'is-active' : ''}
-        type="button"
-        onClick={() => setVariant('prhub')}
-      >
-        Вариант 2 PRHub
-      </button>
-    </div>
-  );
-}
-
 function App() {
-  const [variant, setVariant] = useState<DesignVariant>('prhub');
-
-  return (
-    <>
-      <VariantSwitcher variant={variant} setVariant={setVariant} />
-      {variant === 'cinematic' ? <CinematicPrixSite /> : <PrhubInspiredSite />}
-    </>
-  );
+  return <PrhubInspiredSite />;
 }
 
 export default App;
