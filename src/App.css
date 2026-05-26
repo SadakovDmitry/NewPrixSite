@@ -2697,6 +2697,7 @@
   position: absolute;
   left: 0;
   top: 0;
+  box-sizing: border-box;
   display: inline-flex;
   width: 56px;
   height: 56px;
@@ -3023,7 +3024,7 @@
   .prhub-awards,
   .prhub-contact,
   .prhub-footer {
-    width: min(100% - 32px, 760px);
+    width: min(calc(100% - 32px), 760px);
   }
 
   .prhub-header {
@@ -3050,6 +3051,8 @@
   }
 
   .prhub-hero,
+  .service-studio,
+  .case-editorial,
   .prhub-team,
   .prhub-awards,
   .prhub-section-title {
@@ -3063,12 +3066,64 @@
   }
 
   .prhub-hero-card {
-    min-height: 500px;
+    min-height: 420px;
     transform: translateY(0);
   }
 
   .prhub-hero-copy {
     transform: none;
+  }
+
+  .prhub-intro {
+    margin-top: 0;
+  }
+
+  .three-knight {
+    width: min(620px, 100%);
+    height: 460px;
+  }
+
+  .service-studio {
+    gap: 28px;
+  }
+
+  .service-orbit {
+    position: relative;
+    top: auto;
+    min-height: 520px;
+  }
+
+  .service-manifest {
+    min-height: auto;
+  }
+
+  .case-editorial {
+    gap: 16px;
+  }
+
+  .case-feature {
+    min-height: 460px;
+  }
+
+  .case-strips {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .case-strip-button {
+    min-height: 220px;
+  }
+
+  .team-roster {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 28px;
+  }
+
+  .team-roster article:nth-child(2n) {
+    --team-y: 0px;
+  }
+
+  .document-stack {
+    min-height: 360px;
   }
 
   .prhub-stat-row,
@@ -3120,17 +3175,84 @@
 }
 
 @media (max-width: 620px) {
+  .prhub-header,
+  .prhub-hero,
+  .prhub-about,
+  .prhub-services,
+  .prhub-cases,
+  .prhub-testimonials,
+  .prhub-approach,
+  .prhub-team,
+  .prhub-awards,
+  .prhub-contact,
+  .prhub-footer {
+    width: calc(100% - 28px);
+  }
+
+  .prhub-header {
+    position: sticky;
+    top: 10px;
+    z-index: 30;
+    grid-template-columns: auto auto;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 8px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.9);
+    box-shadow: 0 16px 44px rgba(9, 9, 9, 0.1);
+    backdrop-filter: blur(18px);
+  }
+
+  .prhub-header nav {
+    display: none;
+  }
+
+  .prhub-header nav a {
+    flex: 1 1 0;
+    min-height: 34px;
+    padding: 0 8px;
+    font-size: 11px;
+  }
+
+  .prhub-logo,
+  .prhub-discuss {
+    min-height: 42px;
+  }
+
+  .prhub-logo {
+    justify-self: start;
+    padding: 0 0 0 12px;
+    font-size: 14px;
+    white-space: nowrap;
+  }
+
+  .prhub-discuss {
+    width: auto;
+    justify-self: end;
+    padding: 0 16px;
+    font-size: 11px;
+    white-space: nowrap;
+  }
+
   .prhub-hero h1 {
     font-size: clamp(30px, 9vw, 46px);
     line-height: 1.12;
   }
 
-  .prhub-direct {
-    flex-direction: column;
-    align-items: stretch;
+  .prhub-hero {
+    gap: 20px;
+    padding-top: 42px;
+    padding-bottom: 24px;
   }
 
-  .prhub-direct a,
+  .prhub-hero-card {
+    min-height: 330px;
+  }
+
+  .prhub-direct {
+    display: none;
+  }
+
   .prhub-contact a {
     width: 100%;
     justify-content: center;
@@ -3142,8 +3264,12 @@
   }
 
   .three-knight {
-    width: min(520px, 112%);
-    height: 420px;
+    width: min(440px, 112%);
+    height: 330px;
+  }
+
+  .prhub-hero-card p {
+    font-size: 18px;
   }
 
   .prhub-marquee span {
@@ -3155,8 +3281,95 @@
   .prhub-services-list,
   .prhub-case-board,
   .prhub-approach-grid,
-  .prhub-team-strip {
+  .prhub-team-strip,
+  .case-strips,
+  .team-roster {
     grid-template-columns: 1fr;
+  }
+
+  .prhub-stat-row {
+    gap: 12px;
+  }
+
+  .prhub-stat-row article {
+    min-height: 132px;
+  }
+
+  .prhub-stat-row strong {
+    font-size: clamp(42px, 14vw, 66px);
+  }
+
+  .service-orbit {
+    min-height: 380px;
+    border-radius: 30px;
+  }
+
+  .service-orbit::before {
+    inset: 42px;
+  }
+
+  .service-orbit::after {
+    inset: 92px;
+  }
+
+  .orbit-core {
+    width: 96px;
+    height: 96px;
+    font-size: 32px;
+  }
+
+  .orbit-chip {
+    min-width: 86px;
+    min-height: 38px;
+    padding: 0 12px;
+    font-size: 11px;
+  }
+
+  .orbit-track-1,
+  .orbit-track-3 {
+    --orbit-inset: 92px;
+  }
+
+  .orbit-track-2,
+  .orbit-track-4,
+  .orbit-track-5 {
+    --orbit-inset: 42px;
+  }
+
+  .service-manifest article {
+    grid-template-columns: 34px minmax(0, 1fr);
+    gap: 6px 12px;
+    padding: 18px 0;
+  }
+
+  .service-manifest h3 {
+    font-size: clamp(21px, 7vw, 28px);
+  }
+
+  .case-feature {
+    min-height: 390px;
+    padding: 26px;
+    border-radius: 30px;
+  }
+
+  .case-feature h3 {
+    font-size: clamp(38px, 14vw, 62px);
+  }
+
+  .case-feature li {
+    max-width: none;
+    width: 100%;
+    border-radius: 18px;
+  }
+
+  .case-strip-button {
+    min-height: 190px;
+    padding: 22px;
+    border-radius: 28px;
+  }
+
+  .case-strips h3 {
+    font-size: clamp(28px, 10vw, 42px);
   }
 
   .prhub-services-list article,
@@ -3213,30 +3426,123 @@
 
   .prhub-awards {
     grid-template-columns: 1fr;
+    gap: 22px;
+    overflow: hidden;
   }
 
   .prhub-awards div {
-    min-height: 420px;
+    min-height: auto;
+  }
+
+  .prhub-awards h2 {
+    max-width: 100%;
+    font-size: clamp(24px, 7.4vw, 30px);
+    line-height: 1.14;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+    hyphens: auto;
+  }
+
+  .prhub-awards .document-stack {
+    min-height: auto;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+    place-items: stretch;
+    perspective: none;
+    overflow: visible;
+  }
+
+  .prhub-awards .document-stack::before,
+  .prhub-awards .document-stack::after {
+    content: none;
+  }
+
+  .prhub-awards .document-stack span {
+    position: relative;
+    width: 100%;
+    max-width: 100%;
+    aspect-ratio: auto;
+    min-height: 86px;
+    box-sizing: border-box;
+    justify-content: flex-start;
+    padding: 20px 22px;
+    color: #090909;
+    font-size: 17px;
+    text-align: left;
+    border-radius: 22px;
+    background: rgba(255, 255, 255, 0.86);
+    box-shadow: 0 18px 46px rgba(9, 9, 9, 0.07);
+    transform: none;
+    animation: none;
+  }
+
+  .prhub-awards .document-stack span:nth-child(1),
+  .prhub-awards .document-stack span:nth-child(2),
+  .prhub-awards .document-stack span:nth-child(3),
+  .prhub-awards .document-stack:hover span:nth-child(1),
+  .prhub-awards .document-stack:hover span:nth-child(2),
+  .prhub-awards .document-stack:hover span:nth-child(3) {
+    position: relative;
+    width: 100%;
+    color: #090909;
+    background: rgba(255, 255, 255, 0.86);
+    transform: none;
+  }
+
+  .team-roster {
+    gap: 26px;
+  }
+
+  .team-roster article {
+    --team-y: 0px;
+  }
+
+  .prhub-person-photo {
+    width: min(78%, 250px);
+    aspect-ratio: 0.86;
+    justify-self: center;
+    font-size: clamp(48px, 16vw, 74px);
+  }
+
+  .team-roster h3,
+  .team-roster p {
+    width: min(78%, 250px);
+    margin-right: auto;
+    margin-left: auto;
+  }
+
+  .team-roster h3 {
+    margin-top: 12px;
+    font-size: 22px;
+  }
+
+  .team-roster p {
+    font-size: 17px;
+    line-height: 1.45;
   }
 
   .route-map {
     grid-template-columns: 1fr;
-    gap: 22px;
-    padding-left: 28px;
+    gap: 20px;
+    padding-left: 0;
   }
 
   .route-map::before {
     content: "";
-    left: 27px;
+    left: 28px;
     right: auto;
-    top: 0;
-    bottom: 0;
-    width: 3px;
+    top: 28px;
+    bottom: 28px;
+    width: 2px;
     height: auto;
   }
 
-  .route-map article {
-    padding: 0 0 0 54px;
+  .route-map article,
+  .route-map article:nth-child(2n) {
+    min-height: auto;
+    padding: 0 0 0 76px;
+    transform: none;
   }
 
   .route-map span {
@@ -3265,6 +3571,10 @@
     flex-wrap: wrap;
   }
 
+  .testimonial-actions button {
+    width: 42px;
+  }
+
   .testimonial-actions a {
     flex: 1 1 170px;
   }
@@ -3272,7 +3582,7 @@
   .testimonial-rail {
     grid-auto-columns: minmax(260px, 82%);
     margin-inline: -16px;
-    padding-inline: 16px;
+    padding: 24px 16px 48px;
     scroll-padding-inline: 16px;
   }
 
@@ -3287,6 +3597,72 @@
     margin: 22px 0 16px;
     font-size: 15px;
     -webkit-line-clamp: 6;
+  }
+
+  .prhub-contact h2 {
+    font-size: clamp(30px, 10vw, 44px);
+  }
+
+  .prhub-footer {
+    flex-direction: column;
+    padding-bottom: 42px;
+  }
+}
+
+@media (max-width: 420px) {
+  .prhub-header nav {
+    justify-content: stretch;
+  }
+
+  .prhub-hero h1,
+  .prhub-about h2,
+  .prhub-section-title h2,
+  .prhub-team h2,
+  .prhub-awards h2,
+  .prhub-contact h2 {
+    overflow-wrap: anywhere;
+  }
+
+  .service-orbit {
+    min-height: 330px;
+  }
+
+  .service-orbit::before {
+    inset: 34px;
+  }
+
+  .service-orbit::after {
+    inset: 78px;
+  }
+
+  .orbit-track-1,
+  .orbit-track-3 {
+    --orbit-inset: 78px;
+  }
+
+  .orbit-track-2,
+  .orbit-track-4,
+  .orbit-track-5 {
+    --orbit-inset: 34px;
+  }
+
+  .orbit-chip {
+    min-width: 74px;
+    min-height: 34px;
+    font-size: 10px;
+  }
+
+  .testimonial-rail {
+    grid-auto-columns: minmax(244px, 88%);
+  }
+
+  .testimonial-slide {
+    padding: 20px;
+  }
+
+  .testimonial-slide footer {
+    gap: 10px;
+    font-size: 12px;
   }
 }
 
@@ -3355,7 +3731,7 @@
   .news-section,
   .contact-section,
   .footer {
-    width: min(100% - 32px, 760px);
+    width: min(calc(100% - 32px), 760px);
   }
 
   .site-header {
