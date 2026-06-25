@@ -2260,7 +2260,7 @@
 
 .case-editorial {
   display: grid;
-  grid-template-columns: minmax(0, 0.95fr) minmax(300px, 0.65fr);
+  grid-template-columns: minmax(0, 0.95fr) minmax(280px, 0.58fr);
   gap: 18px;
   align-items: stretch;
 }
@@ -2270,8 +2270,8 @@
   min-height: 560px;
   display: flex;
   flex-direction: column;
-  justify-content: flex-end;
-  padding: 42px;
+  justify-content: center;
+  padding: clamp(118px, 10vw, 154px) 42px 42px;
   color: #ffffff;
   border-radius: 46px;
   background:
@@ -2314,58 +2314,63 @@
 }
 
 .case-feature h3 {
-  max-width: 100%;
+  max-width: min(100%, 620px);
   color: #ffffff;
-  font-size: clamp(46px, 6.2vw, 88px);
+  font-size: clamp(42px, 4.7vw, 68px);
   font-weight: 520;
-  line-height: 0.96;
-  overflow-wrap: anywhere;
+  line-height: 1;
+  overflow-wrap: normal;
+  word-break: normal;
+  hyphens: none;
 }
 
 .case-feature p {
-  max-width: 560px;
+  max-width: 620px;
   margin: 18px 0 0;
   color: rgba(255, 255, 255, 0.74);
 }
 
 .case-feature ul {
-  display: flex;
+  width: min(100%, 680px);
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 8px;
-  flex-wrap: wrap;
   margin: 26px 0 0;
   padding: 0;
   list-style: none;
 }
 
 .case-feature li {
-  max-width: 260px;
+  min-width: 0;
+  max-width: none;
   padding: 10px 12px;
   color: rgba(255, 255, 255, 0.82);
-  font-size: 13px;
+  font-size: 12px;
   line-height: 1.35;
   border: 1px solid rgba(255, 255, 255, 0.16);
-  border-radius: 999px;
+  border-radius: 18px;
   background: rgba(255, 255, 255, 0.08);
+  overflow-wrap: anywhere;
 }
 
 .case-strips {
   display: grid;
-  gap: 14px;
+  gap: 10px;
 }
 
 .case-strip-button {
   position: relative;
-  min-height: 270px;
+  min-height: 104px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   width: 100%;
-  padding: 28px;
+  padding: 16px 18px;
   color: #090909;
   font: inherit;
   text-align: left;
   border: 1px solid rgba(9, 9, 9, 0.12);
-  border-radius: 32px;
+  border-radius: 24px;
   background:
     radial-gradient(circle at 86% 18%, rgba(255, 205, 67, 0.34), transparent 30%),
     rgba(255, 255, 255, 0.72);
@@ -2396,21 +2401,34 @@
 
 .case-strips span {
   color: rgba(9, 9, 9, 0.32);
-  font-size: 13px;
+  font-size: 11px;
   font-weight: 820;
 }
 
 .case-strips h3 {
-  margin-top: 10px;
-  font-size: clamp(30px, 3.2vw, 46px);
-  line-height: 1.02;
+  margin-top: 5px;
+  font-size: clamp(18px, 1.6vw, 28px);
+  line-height: 1.04;
   overflow-wrap: anywhere;
 }
 
 .case-strips p,
 .case-strips small {
   color: rgba(9, 9, 9, 0.62);
-  line-height: 1.45;
+  font-size: 12px;
+  line-height: 1.32;
+}
+
+.case-strips p {
+  margin: 8px 0 0;
+}
+
+.case-strips small {
+  display: -webkit-box;
+  margin-top: 8px;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
 }
 
 .testimonial-board {
@@ -3348,7 +3366,7 @@
 
   .case-feature {
     min-height: 390px;
-    padding: 26px;
+    padding: 96px 26px 26px;
     border-radius: 30px;
   }
 
@@ -3360,6 +3378,11 @@
     max-width: none;
     width: 100%;
     border-radius: 18px;
+  }
+
+  .case-feature ul {
+    grid-template-columns: 1fr;
+    gap: 8px;
   }
 
   .case-strip-button {
