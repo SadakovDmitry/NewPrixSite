@@ -3128,7 +3128,12 @@
   }
 
   .case-strip-button {
-    min-height: 220px;
+    min-height: 132px;
+    padding: 18px;
+  }
+
+  .case-strips h3 {
+    font-size: clamp(20px, 3vw, 30px);
   }
 
   .team-roster {
@@ -3371,7 +3376,8 @@
   }
 
   .case-feature h3 {
-    font-size: clamp(38px, 14vw, 62px);
+    font-size: clamp(32px, 10.5vw, 46px);
+    line-height: 1.04;
   }
 
   .case-feature li {
@@ -3386,13 +3392,13 @@
   }
 
   .case-strip-button {
-    min-height: 190px;
-    padding: 22px;
+    min-height: 126px;
+    padding: 18px;
     border-radius: 28px;
   }
 
   .case-strips h3 {
-    font-size: clamp(28px, 10vw, 42px);
+    font-size: clamp(21px, 7vw, 30px);
   }
 
   .prhub-services-list article,
