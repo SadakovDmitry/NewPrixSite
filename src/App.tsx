@@ -1,7 +1,19 @@
 import { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
+import aeiLogo from './assets/client-logos/aei.png';
+import promplanLogo from './assets/client-logos/promplan.svg';
 import prixKnightSvg from './assets/prix-knight.svg?raw';
+import russianIndustrialistLogo from './assets/client-logos/russian-industrialist.png';
+import sdelanoKhvLogo from './assets/client-logos/sdelano-khv.svg';
+import tamashiLogo from './assets/client-logos/tamashi.svg';
 import './App.css';
+
+type CaseLogo = {
+  image?: string;
+  alt: string;
+  label: string;
+  variant: string;
+};
 
 const stats = [
   { value: '8', label: 'лет в коммуникациях' },
@@ -14,44 +26,73 @@ const certificates = ['Роспром', 'АЭИ', 'Промплан'];
 
 const portfolio = [
   {
-    company: 'Роспром',
+    company: 'Официальный медиа партнер форума “Российский промышленник”',
     type: 'Промышленность / репутация',
+    logo: {
+      image: russianIndustrialistLogo,
+      alt: 'Логотип форума Российский промышленник',
+      label: 'РП',
+      variant: 'russian-industrialist',
+    },
     publications: [
-      'Комментарий эксперта для деловой повестки',
-      'Интервью о развитии отраслевых инициатив',
-      'Анонс стратегической сессии для профессионального сообщества',
+      'Комплексное освещение мероприятий под ключ',
+      'Формирование федеральной информационной повестки',
+      'Медиасопровождение первых лиц и ключевых спикеров',
     ],
   },
   {
     company: 'АЭИ',
     type: 'Ассоциации / BRICS',
+    logo: {
+      image: aeiLogo,
+      alt: 'Логотип АЭИ',
+      label: 'АЭИ',
+      variant: 'aei',
+    },
     publications: [
-      'Публикация по итогам круглого стола',
-      'Новостной выход о международной повестке',
-      'Материал о партнерствах и деловых коммуникациях',
+      'Ежемесячный охват — более 40 млн человек',
+      'Эфиры на Первом канале и телеканале «Россия 1»',
+      'Более 1000 упоминаний в ведущих СМИ страны',
     ],
   },
   {
     company: 'Промплан',
     type: 'B2B / медиа-сопровождение',
+    logo: {
+      image: promplanLogo,
+      alt: 'Логотип Промплан',
+      label: 'Промплан',
+      variant: 'promplan',
+    },
     publications: [
-      'Экспертная колонка о рынке и управлении',
-      'Серия публикаций для усиления доверия',
-      'Пресс-подход к запуску нового направления',
+      'Публикации в топ-СМИ уже с первого месяца',
+      'Системное формирование экспертного позиционирования',
+      'Укрепление деловой репутации через федеральную повестку',
     ],
   },
   {
     company: 'Андрей Коган',
     type: 'Импорт / Китай / экспертные колонки',
+    logo: {
+      alt: 'Андрей Коган',
+      label: 'АК',
+      variant: 'andrey-kogan',
+    },
     publications: [
-      'PR-сопровождение за 2 недели',
-      'Публикации в РГ, Lenta.ru, Известиях и КП',
-      'Вирусное развитие экспертной позиции',
+      'Публикации в топ-СМИ в первую неделю сотрудничества',
+      'Лидер федеральной повестки по логистике из Китая',
+      'Регулярные выходы в РГ, Lenta.ru, «Известиях» и «Комсомольской правде»',
     ],
   },
   {
     company: 'Tamashi',
     type: 'Автомобильный бренд / федеральные СМИ',
+    logo: {
+      image: tamashiLogo,
+      alt: 'Логотип Tamashi',
+      label: 'Tamashi',
+      variant: 'tamashi',
+    },
     publications: [
       '70+ публикаций и 1000+ упоминаний',
       '35+ млн охвата за март 2026',
@@ -61,6 +102,12 @@ const portfolio = [
   {
     company: 'Сделано в Хабаровском крае',
     type: 'GR / открытие флагманского центра',
+    logo: {
+      image: sdelanoKhvLogo,
+      alt: 'Логотип Сделано в Хабаровском крае',
+      label: 'ХК',
+      variant: 'sdelano-khv',
+    },
     publications: [
       'Прогрев и федеральное освещение открытия',
       'Коммуникация с ТАСС, РИА Новости и АиФ',
@@ -151,6 +198,18 @@ function AnimatedStatCard({ value, label }: { value: string; label: string }) {
       </strong>
       <span>{label}</span>
     </article>
+  );
+}
+
+function CaseLogoMark({ logo }: { logo: CaseLogo }) {
+  return (
+    <div
+      className={`case-logo-mark case-logo-mark-${logo.variant} ${
+        logo.image ? 'case-logo-mark-image' : 'case-logo-mark-text'
+      }`}
+    >
+      {logo.image ? <img src={logo.image} alt={logo.alt} loading="lazy" /> : <span>{logo.label}</span>}
+    </div>
   );
 }
 
@@ -443,9 +502,9 @@ function PrhubInspiredSite() {
           <p className="prhub-tag">PRIX CLUB / медиа-присутствие и репутация</p>
           <h1 id="prhub-title">Создаем доверие через медиа.</h1>
           <div className="prhub-direct">
-            <a href="https://t.me/" target="_blank" rel="noreferrer">Telegram</a>
-            <a href="#prhub-contact">MAX</a>
-            <a href="mailto:hello@prix.club">Почта</a>
+            <a href="https://t.me/polinakonder" target="_blank" rel="noreferrer">@polinakonder</a>
+            <a href="#prhub-contact">MAX: Полина</a>
+            <a href="mailto:info@prixclub.ru">Почта</a>
           </div>
         </div>
 
@@ -518,7 +577,10 @@ function PrhubInspiredSite() {
 
         <div className="case-editorial">
           <article className={`case-feature case-feature-${caseDirection}`} key={activeCase.company}>
-            <span>Featured media room</span>
+            <div className="case-feature-topline">
+              <CaseLogoMark logo={activeCase.logo} />
+              <span className="case-feature-badge">Featured media room</span>
+            </div>
             <h3>{activeCase.company}</h3>
             <p>{activeCase.type}</p>
             <ul>
@@ -539,9 +601,12 @@ function PrhubInspiredSite() {
                   type="button"
                   onClick={() => selectCase(originalIndex)}
                 >
-                  <div>
-                    <span>{String(originalIndex + 1).padStart(2, '0')}</span>
-                    <h3>{item.company}</h3>
+                  <div className="case-strip-heading">
+                    <CaseLogoMark logo={item.logo} />
+                    <div className="case-strip-title">
+                      <span>{String(originalIndex + 1).padStart(2, '0')}</span>
+                      <h3>{item.company}</h3>
+                    </div>
                   </div>
                   <p>{item.type}</p>
                   <small>{item.publications[0]}</small>
@@ -566,7 +631,7 @@ function PrhubInspiredSite() {
             <button type="button" onClick={() => scrollTestimonials(1)} aria-label="Следующий отзыв">
               →
             </button>
-            <a href="mailto:hello@prix.club?subject=Отзыв%20о%20PRIX%20CLUB">оставить отзыв</a>
+            <a href="mailto:info@prixclub.ru?subject=Отзыв%20о%20PRIX%20CLUB">оставить отзыв</a>
           </div>
 
           <div className="testimonial-rail" ref={testimonialScrollerRef}>
@@ -590,7 +655,7 @@ function PrhubInspiredSite() {
           <h2 id="prhub-approach-title">Процесс, который превращает экспертизу в медийное присутствие.</h2>
         </div>
 
-        <div className="route-map">
+        <div className="route-map" lang="ru">
           {prhubApproach.map(([num, title, text]) => (
             <article key={num}>
               <span>{num}</span>
@@ -628,11 +693,11 @@ function PrhubInspiredSite() {
 
       <section className="prhub-contact" id="prhub-contact" aria-labelledby="prhub-contact-title">
         <p>Ready to fill the brief?</p>
-        <h2 id="prhub-contact-title">Мы здесь, чтобы помочь.</h2>
+        <h2 id="prhub-contact-title">Мы здесь, чтобы сделать ваш бренд узнаваемым</h2>
         <div>
-          <a href="mailto:hello@prix.club">hello@prix.club</a>
-          <a href="https://t.me/" target="_blank" rel="noreferrer">Telegram</a>
-          <a href="#prhub-top">MAX</a>
+          <a href="mailto:info@prixclub.ru">info@prixclub.ru</a>
+          <a href="https://t.me/polinakonder" target="_blank" rel="noreferrer">@polinakonder</a>
+          <a href="#prhub-top">MAX: Полина</a>
         </div>
       </section>
 

@@ -2005,7 +2005,9 @@
 }
 
 .prhub-contact h2 {
+  max-width: 980px;
   color: #ffffff;
+  overflow-wrap: break-word;
 }
 
 .prhub-contact div {
@@ -2300,9 +2302,80 @@
   line-height: 1;
 }
 
-.case-feature > span {
+.case-feature-topline {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: space-between;
+  width: 100%;
+  margin-bottom: 28px;
+}
+
+.case-logo-mark {
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  width: 88px;
+  height: 54px;
+  padding: 10px;
+  color: #090909;
+  border: 1px solid rgba(9, 9, 9, 0.1);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: 0 16px 36px rgba(9, 9, 9, 0.1);
+  overflow: hidden;
+}
+
+.case-logo-mark img {
+  display: block;
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  object-position: center;
+}
+
+.case-logo-mark-text {
+  font-size: 20px;
+  font-weight: 860;
+  line-height: 1;
+}
+
+.case-feature .case-logo-mark {
+  width: 136px;
+  height: 82px;
+  padding: 12px;
+  border-color: transparent;
+  border-radius: 22px;
+  background: #ffcd43;
+  box-shadow: none;
+  overflow: hidden;
+}
+
+.case-feature .case-logo-mark-text {
+  width: 72px;
+  height: 48px;
+  border-radius: 14px;
+  background: #ffcd43;
+}
+
+.case-feature .case-logo-mark-aei img {
+  max-width: 90px;
+  max-height: 58px;
+}
+
+.case-feature .case-logo-mark-russian-industrialist img {
+  max-width: 96px;
+  max-height: 58px;
+}
+
+.case-feature-badge {
   width: fit-content;
-  margin-bottom: 18px;
+  margin-left: auto;
   padding: 8px 12px;
   color: #090909;
   font-size: 12px;
@@ -2314,23 +2387,30 @@
 }
 
 .case-feature h3 {
-  max-width: min(100%, 620px);
+  position: relative;
+  z-index: 1;
+  max-width: min(100%, 760px);
   color: #ffffff;
-  font-size: clamp(42px, 4.7vw, 68px);
+  font-size: clamp(30px, 4vw, 58px);
   font-weight: 520;
-  line-height: 1;
-  overflow-wrap: normal;
+  line-height: 1.04;
+  text-wrap: balance;
+  overflow-wrap: break-word;
   word-break: normal;
   hyphens: none;
 }
 
 .case-feature p {
+  position: relative;
+  z-index: 1;
   max-width: 620px;
   margin: 18px 0 0;
   color: rgba(255, 255, 255, 0.74);
 }
 
 .case-feature ul {
+  position: relative;
+  z-index: 1;
   width: min(100%, 680px);
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -2361,9 +2441,12 @@
 .case-strip-button {
   position: relative;
   min-height: 104px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: 96px minmax(0, 1fr);
+  grid-template-rows: auto auto auto;
+  align-content: center;
+  column-gap: 16px;
+  row-gap: 7px;
   width: 100%;
   padding: 16px 18px;
   color: #090909;
@@ -2399,7 +2482,66 @@
   animation-delay: 80ms;
 }
 
-.case-strips span {
+.case-strip-heading {
+  display: contents;
+}
+
+.case-strip-button .case-logo-mark {
+  grid-column: 1;
+  grid-row: 1 / 4;
+  align-self: center;
+  justify-self: start;
+  width: 82px;
+  height: 58px;
+  padding: 0;
+  border-color: transparent;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  overflow: visible;
+}
+
+.case-strip-button .case-logo-mark-text {
+  place-self: center start;
+  width: 52px;
+  height: 36px;
+  font-size: 16px;
+  border-radius: 11px;
+  background: rgba(255, 255, 255, 0.52);
+}
+
+.case-strip-title {
+  grid-column: 2;
+  grid-row: 1;
+  align-self: end;
+  flex: 1 1 auto;
+  min-width: 0;
+  text-align: right;
+}
+
+.case-strip-button > p {
+  grid-column: 2;
+  grid-row: 2;
+  text-align: right;
+}
+
+.case-strip-button > small {
+  grid-column: 2;
+  grid-row: 3;
+  text-align: right;
+}
+
+.case-strip-button .case-logo-mark-aei img {
+  max-width: 62px;
+  max-height: 54px;
+}
+
+.case-strip-button .case-logo-mark-russian-industrialist img {
+  max-width: 76px;
+  max-height: 54px;
+}
+
+.case-strip-title span {
   color: rgba(9, 9, 9, 0.32);
   font-size: 11px;
   font-weight: 820;
@@ -2420,12 +2562,12 @@
 }
 
 .case-strips p {
-  margin: 8px 0 0;
+  margin: 0;
 }
 
 .case-strips small {
   display: -webkit-box;
-  margin-top: 8px;
+  margin-top: 0;
   overflow: hidden;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
@@ -2738,12 +2880,18 @@
   font-size: 22px;
   font-weight: 560;
   line-height: 1.14;
+  overflow-wrap: break-word;
+  hyphens: auto;
+  -webkit-hyphens: auto;
 }
 
 .route-map p {
   margin: 12px 0 0;
   color: rgba(9, 9, 9, 0.62);
   line-height: 1.5;
+  overflow-wrap: break-word;
+  hyphens: auto;
+  -webkit-hyphens: auto;
 }
 
 .team-roster {
@@ -3123,6 +3271,11 @@
     min-height: 460px;
   }
 
+  .case-feature .case-logo-mark {
+    width: 108px;
+    height: 62px;
+  }
+
   .case-strips {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -3375,6 +3528,16 @@
     border-radius: 30px;
   }
 
+  .case-feature-topline {
+    gap: 10px;
+  }
+
+  .case-feature .case-logo-mark {
+    width: 112px;
+    height: 68px;
+    border-radius: 18px;
+  }
+
   .case-feature h3 {
     font-size: clamp(32px, 10.5vw, 46px);
     line-height: 1.04;
@@ -3392,9 +3555,37 @@
   }
 
   .case-strip-button {
+    grid-template-columns: 86px minmax(0, 1fr);
+    column-gap: 12px;
+    row-gap: 7px;
     min-height: 126px;
     padding: 18px;
     border-radius: 28px;
+  }
+
+  .case-strip-heading {
+    display: contents;
+  }
+
+  .case-strip-button .case-logo-mark {
+    width: 76px;
+    height: 54px;
+    padding: 0;
+  }
+
+  .case-strip-button .case-logo-mark-aei img {
+    max-width: 58px;
+    max-height: 50px;
+  }
+
+  .case-strip-button .case-logo-mark-russian-industrialist img {
+    max-width: 70px;
+    max-height: 50px;
+  }
+
+  .case-strip-button .case-logo-mark-text {
+    width: 50px;
+    height: 36px;
   }
 
   .case-strips h3 {
@@ -3525,12 +3716,14 @@
 
   .team-roster article {
     --team-y: 0px;
+    text-align: center;
   }
 
   .prhub-person-photo {
     width: min(78%, 250px);
     aspect-ratio: 0.86;
     justify-self: center;
+    margin-inline: auto;
     font-size: clamp(48px, 16vw, 74px);
   }
 
@@ -3539,6 +3732,7 @@
     width: min(78%, 250px);
     margin-right: auto;
     margin-left: auto;
+    text-align: center;
   }
 
   .team-roster h3 {
