@@ -3535,7 +3535,19 @@
   .case-feature .case-logo-mark {
     width: 112px;
     height: 68px;
+    padding: 8px;
     border-radius: 18px;
+    place-items: center;
+  }
+
+  .case-feature .case-logo-mark-aei img {
+    max-width: 76px;
+    max-height: 48px;
+  }
+
+  .case-feature .case-logo-mark-russian-industrialist img {
+    max-width: 78px;
+    max-height: 48px;
   }
 
   .case-feature h3 {
