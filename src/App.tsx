@@ -517,8 +517,14 @@ function PrhubInspiredSite() {
           <p className="prhub-tag">PRIX CLUB / медиа-присутствие и репутация</p>
           <h1 id="prhub-title">Создаем доверие через медиа.</h1>
           <div className="prhub-direct">
-            <a href="https://t.me/polinakonder" target="_blank" rel="noreferrer">@polinakonder</a>
-            <a href="#prhub-contact">MAX: Полина</a>
+            <a href="https://t.me/polinakonder" target="_blank" rel="noreferrer">Telegram</a>
+            <a
+              href="https://max.ru/u/f9LHodD0cOJYG4HLNeA2ggsya8cBA0RfQooHqNIZCyYohIlRmZTAV4Q3h1k"
+              target="_blank"
+              rel="noreferrer"
+            >
+              MAX
+            </a>
             <a href="mailto:info@prixclub.ru">Почта</a>
           </div>
         </div>
@@ -704,8 +710,14 @@ function PrhubInspiredSite() {
         <h2 id="prhub-contact-title">Мы здесь, чтобы сделать ваш бренд узнаваемым</h2>
         <div>
           <a href="mailto:info@prixclub.ru">info@prixclub.ru</a>
-          <a href="https://t.me/polinakonder" target="_blank" rel="noreferrer">@polinakonder</a>
-          <a href="#prhub-top">MAX: Полина</a>
+          <a href="https://t.me/polinakonder" target="_blank" rel="noreferrer">Telegram</a>
+          <a
+            href="https://max.ru/u/f9LHodD0cOJYG4HLNeA2ggsya8cBA0RfQooHqNIZCyYohIlRmZTAV4Q3h1k"
+            target="_blank"
+            rel="noreferrer"
+          >
+            MAX
+          </a>
         </div>
       </section>
 
