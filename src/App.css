@@ -2685,6 +2685,10 @@
   -webkit-line-clamp: 2;
 }
 
+.case-strip-button-andrey-kogan > small {
+  -webkit-line-clamp: 3;
+}
+
 .testimonial-board {
   position: relative;
   display: grid;

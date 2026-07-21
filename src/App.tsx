@@ -24,12 +24,6 @@ const stats = [
   { value: '100M+', label: 'охватов каждый месяц' },
 ];
 
-const certificates = [
-  { label: 'Роспром', caseIndex: 0 },
-  { label: 'АЭИ', caseIndex: 1 },
-  { label: 'Промплан', caseIndex: 2 },
-];
-
 const portfolio = [
   {
     company: 'Официальный медиа партнер форума “Российский промышленник”',
@@ -478,10 +472,6 @@ function PrhubInspiredSite() {
     setCaseAutoDelay(10000);
     setActiveCaseIndex(index);
   };
-  const openAwardCase = (index: number) => {
-    selectCase(index);
-    document.getElementById('prhub-cases')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  };
   const scrollTestimonials = (direction: -1 | 1) => {
     const scroller = testimonialScrollerRef.current;
 
@@ -620,7 +610,7 @@ function PrhubInspiredSite() {
 
               return (
                 <button
-                  className="case-strip-button"
+                  className={`case-strip-button case-strip-button-${item.logo.variant}`}
                   key={item.company}
                   type="button"
                   onClick={() => selectCase(originalIndex)}
@@ -705,17 +695,6 @@ function PrhubInspiredSite() {
               <strong>{partner.name}</strong>
               <small>{partner.href.replace(/^https?:\/\//, '').replace(/\/$/, '')}</small>
             </a>
-          ))}
-        </div>
-      </section>
-
-      <section className="prhub-awards" aria-labelledby="prhub-awards-title">
-        <h2 id="prhub-awards-title">Наши проекты получают благодарственные письма, сертификаты и отраслевое признание.</h2>
-        <div className="document-stack">
-          {certificates.map((item) => (
-            <button key={item.label} type="button" onClick={() => openAwardCase(item.caseIndex)}>
-              {item.label}
-            </button>
           ))}
         </div>
       </section>
