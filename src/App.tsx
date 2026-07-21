@@ -1,11 +1,13 @@
 import { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
 import aeiLogo from './assets/client-logos/aei.png';
+import lazovskiyLogo from './assets/client-logos/lazovskiy.png';
 import promplanLogo from './assets/client-logos/promplan.svg';
 import prixKnightSvg from './assets/prix-knight.svg?raw';
 import russianIndustrialistLogo from './assets/client-logos/russian-industrialist.png';
 import sdelanoKhvLogo from './assets/client-logos/sdelano-khv.svg';
 import tamashiLogo from './assets/client-logos/tamashi.svg';
+import vbiLogo from './assets/client-logos/vbi.svg';
 import './App.css';
 
 type CaseLogo = {
@@ -22,7 +24,11 @@ const stats = [
   { value: '100M+', label: 'охватов каждый месяц' },
 ];
 
-const certificates = ['Роспром', 'АЭИ', 'Промплан'];
+const certificates = [
+  { label: 'Роспром', caseIndex: 0 },
+  { label: 'АЭИ', caseIndex: 1 },
+  { label: 'Промплан', caseIndex: 2 },
+];
 
 const portfolio = [
   {
@@ -72,13 +78,14 @@ const portfolio = [
   },
   {
     company: 'Андрей Коган',
-    type: 'Импорт / Китай / экспертные колонки',
+    type: 'Топ-менеджер / импорт из Китая / экспертные колонки',
     logo: {
       alt: 'Андрей Коган',
       label: 'АК',
       variant: 'andrey-kogan',
     },
     publications: [
+      'Статус федерального эксперта по импорту из Китая за два месяца',
       'Публикации в топ-СМИ в первую неделю сотрудничества',
       'Лидер федеральной повестки по логистике из Китая',
       'Регулярные выходы в РГ, Lenta.ru, «Известиях» и «Комсомольской правде»',
@@ -116,11 +123,25 @@ const portfolio = [
   },
 ];
 
-const team = [
-  { name: 'Полина', role: 'CEO', initials: 'П' },
-  { name: 'Владимир', role: 'Менеджер проектов, управляет IT отделом', initials: 'В' },
-  { name: 'Денис', role: 'PR директор, взаимодействует со СМИ', initials: 'Д' },
-  { name: 'Мария', role: 'SMM, делает бренд заметным в соцсетях', initials: 'М' },
+const partners = [
+  {
+    name: 'Дом Лазовского',
+    href: 'https://lazovskiy.ru/',
+    logo: lazovskiyLogo,
+    alt: 'Логотип Дом Лазовского',
+  },
+  {
+    name: 'Цифровое маркетинговое агентство VBI',
+    href: 'https://vbi.ru/',
+    logo: vbiLogo,
+    alt: 'Логотип VBI',
+  },
+  {
+    name: 'Ассоциация экспортёров и импортёров',
+    href: 'https://exporterimporter.ru/',
+    logo: aeiLogo,
+    alt: 'Логотип Ассоциации экспортёров и импортёров',
+  },
 ];
 
 function splitStatValue(value: string) {
@@ -457,6 +478,10 @@ function PrhubInspiredSite() {
     setCaseAutoDelay(10000);
     setActiveCaseIndex(index);
   };
+  const openAwardCase = (index: number) => {
+    selectCase(index);
+    document.getElementById('prhub-cases')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
   const scrollTestimonials = (direction: -1 | 1) => {
     const scroller = testimonialScrollerRef.current;
 
@@ -492,7 +517,7 @@ function PrhubInspiredSite() {
         <nav>
           <a href="#prhub-services">services</a>
           <a href="#prhub-cases">cases</a>
-          <a href="#prhub-team">our team</a>
+          <a href="#prhub-partners">partners</a>
         </nav>
         <a className="prhub-discuss" href="#prhub-contact">discuss project</a>
       </header>
@@ -512,13 +537,12 @@ function PrhubInspiredSite() {
           <ThreeKnightScene />
           <div>
             <span>PRIX CLUB</span>
-            <p>Бутик-агентство полного цикла</p>
+            <p>PR-агентство полного цикла с фокусом на экономику бизнеса</p>
           </div>
         </div>
 
         <p className="prhub-intro">
-          8 лет продвигаем компании и персон в России и странах БРИКС:
-          PR-стратегия, публикации, события и работа с репутацией.
+          8 лет создаем репутацию и повышаем продажи для бизнеса и персон в России, СНГ и странах БРИКС
         </p>
       </section>
 
@@ -666,18 +690,21 @@ function PrhubInspiredSite() {
         </div>
       </section>
 
-      <section className="prhub-team" id="prhub-team" aria-labelledby="prhub-team-title">
-        <div>
-          <p className="prhub-mini">We care about people, the process, and the result</p>
-          <h2 id="prhub-team-title">Ядро компании</h2>
+      <section className="prhub-partners" id="prhub-partners" aria-labelledby="prhub-partners-title">
+        <div className="prhub-section-title">
+          <p>Partners</p>
+          <h2 id="prhub-partners-title">Партнеры</h2>
         </div>
-        <div className="team-roster">
-          {team.map((member) => (
-            <article key={member.name}>
-              <div className="prhub-person-photo">{member.initials}</div>
-              <h3>{member.name}</h3>
-              <p>{member.role}</p>
-            </article>
+
+        <div className="partner-grid">
+          {partners.map((partner) => (
+            <a href={partner.href} key={partner.name} target="_blank" rel="noreferrer">
+              <span className="partner-logo">
+                <img src={partner.logo} alt={partner.alt} loading="lazy" />
+              </span>
+              <strong>{partner.name}</strong>
+              <small>{partner.href.replace(/^https?:\/\//, '').replace(/\/$/, '')}</small>
+            </a>
           ))}
         </div>
       </section>
@@ -686,7 +713,9 @@ function PrhubInspiredSite() {
         <h2 id="prhub-awards-title">Наши проекты получают благодарственные письма, сертификаты и отраслевое признание.</h2>
         <div className="document-stack">
           {certificates.map((item) => (
-            <span key={item}>{item}</span>
+            <button key={item.label} type="button" onClick={() => openAwardCase(item.caseIndex)}>
+              {item.label}
+            </button>
           ))}
         </div>
       </section>
@@ -703,8 +732,8 @@ function PrhubInspiredSite() {
 
       <footer className="prhub-footer">
         <span>© PRIX CLUB</span>
-        <a href="#prhub-team">Our team</a>
         <a href="#prhub-cases">Cases</a>
+        <a href="#prhub-partners">Partners</a>
         <a href="#prhub-services">Services</a>
         <a href="#prhub-contact">Privacy Policy</a>
       </footer>

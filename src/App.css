@@ -840,6 +840,7 @@
 .prhub-cases,
 .prhub-testimonials,
 .prhub-approach,
+.prhub-partners,
 .prhub-team,
 .prhub-awards,
 .prhub-contact,
@@ -1161,6 +1162,7 @@
 .prhub-cases,
 .prhub-testimonials,
 .prhub-approach,
+.prhub-partners,
 .prhub-team,
 .prhub-awards,
 .prhub-contact {
@@ -1174,6 +1176,7 @@
 .prhub-cases::before,
 .prhub-testimonials::before,
 .prhub-approach::before,
+.prhub-partners::before,
 .prhub-team::before,
 .prhub-awards::before {
   content: "";
@@ -1294,6 +1297,7 @@
 
 .prhub-about h2,
 .prhub-section-title h2,
+.prhub-partners h2,
 .prhub-team h2,
 .prhub-awards h2,
 .prhub-contact h2 {
@@ -1921,6 +1925,112 @@
   font-size: 18px;
   font-weight: 620;
   line-height: 1.2;
+}
+
+.prhub-partners::before {
+  right: 12%;
+  bottom: 24px;
+  width: min(560px, 58vw);
+  height: 180px;
+  background: linear-gradient(90deg, rgba(80, 176, 255, 0.18), rgba(255, 205, 67, 0.2));
+}
+
+.partner-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.partner-grid a {
+  position: relative;
+  min-height: 220px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 24px;
+  color: #090909;
+  text-decoration: none;
+  border: 1px solid rgba(9, 9, 9, 0.12);
+  border-radius: 28px;
+  background:
+    radial-gradient(circle at 84% 18%, rgba(255, 205, 67, 0.28), transparent 30%),
+    rgba(255, 255, 255, 0.78);
+  box-shadow: 0 18px 54px rgba(9, 9, 9, 0.06);
+  overflow: hidden;
+  transition:
+    transform 220ms ease,
+    box-shadow 220ms ease,
+    border-color 220ms ease;
+}
+
+.partner-grid a:nth-child(2) {
+  background:
+    radial-gradient(circle at 84% 18%, rgba(80, 176, 255, 0.22), transparent 30%),
+    rgba(255, 255, 255, 0.78);
+}
+
+.partner-grid a:nth-child(3) {
+  background:
+    radial-gradient(circle at 84% 18%, rgba(155, 92, 255, 0.16), transparent 30%),
+    rgba(255, 255, 255, 0.78);
+}
+
+.partner-grid a:hover,
+.partner-grid a:focus-visible {
+  transform: translateY(-6px);
+  border-color: rgba(9, 9, 9, 0.22);
+  box-shadow: 0 28px 72px rgba(9, 9, 9, 0.1);
+  outline: none;
+}
+
+.partner-logo {
+  width: min(100%, 210px);
+  height: 82px;
+  display: grid;
+  align-items: center;
+  justify-items: start;
+  align-self: flex-start;
+}
+
+.partner-logo img {
+  display: block;
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  object-position: left center;
+}
+
+.partner-grid a:nth-child(1) .partner-logo img {
+  filter: invert(1);
+}
+
+.partner-grid a:nth-child(3) .partner-logo {
+  height: 72px;
+}
+
+.partner-grid a:nth-child(3) .partner-logo img {
+  max-height: 58px;
+}
+
+.partner-grid a:nth-child(3) strong {
+  margin-top: 50px;
+}
+
+.partner-grid strong {
+  margin-top: 36px;
+  font-size: clamp(22px, 2.2vw, 32px);
+  font-weight: 720;
+  line-height: 1.05;
+  text-wrap: balance;
+}
+
+.partner-grid small {
+  margin-top: 14px;
+  color: rgba(9, 9, 9, 0.5);
+  font-size: 12px;
+  font-weight: 620;
 }
 
 .prhub-awards {
@@ -2551,7 +2661,9 @@
   margin-top: 5px;
   font-size: clamp(18px, 1.6vw, 28px);
   line-height: 1.04;
-  overflow-wrap: anywhere;
+  overflow-wrap: normal;
+  word-break: normal;
+  hyphens: none;
 }
 
 .case-strips p,
@@ -2997,7 +3109,7 @@
   animation: document-shadow-float 7s ease-in-out infinite reverse;
 }
 
-.document-stack span {
+.document-stack button {
   --doc-x: 0px;
   --doc-y: 0px;
   --doc-r: 0deg;
@@ -3010,15 +3122,18 @@
   justify-content: center;
   padding: 18px 24px;
   color: #090909;
+  font: inherit;
   font-size: 20px;
   font-weight: 680;
   text-align: center;
   border: 1px solid rgba(9, 9, 9, 0.12);
   border-radius: 22px;
+  appearance: none;
   background: #ffffff;
   box-shadow: 0 22px 60px rgba(9, 9, 9, 0.1);
   transform: translate(var(--doc-x), var(--doc-y)) rotate(var(--doc-r));
   animation: document-card-float 6.4s ease-in-out infinite;
+  cursor: pointer;
   transition:
     transform 520ms cubic-bezier(0.18, 1, 0.28, 1),
     box-shadow 300ms ease,
@@ -3026,13 +3141,13 @@
   will-change: transform;
 }
 
-.document-stack span:nth-child(1) {
+.document-stack button:nth-child(1) {
   --doc-x: -22px;
   --doc-y: -86px;
   --doc-r: -5deg;
 }
 
-.document-stack span:nth-child(2) {
+.document-stack button:nth-child(2) {
   color: #ffffff;
   background: #090909;
   --doc-x: 18px;
@@ -3041,7 +3156,7 @@
   animation-delay: -1.7s;
 }
 
-.document-stack span:nth-child(3) {
+.document-stack button:nth-child(3) {
   background: #ffcd43;
   --doc-x: -8px;
   --doc-y: 86px;
@@ -3049,20 +3164,20 @@
   animation-delay: -3.2s;
 }
 
-.document-stack:hover span {
+.document-stack:hover button {
   animation-play-state: paused;
   box-shadow: 0 32px 86px rgba(9, 9, 9, 0.14);
 }
 
-.document-stack:hover span:nth-child(1) {
+.document-stack:hover button:nth-child(1) {
   transform: translate(-102px, -108px) rotate(-12deg);
 }
 
-.document-stack:hover span:nth-child(2) {
+.document-stack:hover button:nth-child(2) {
   transform: translate(72px, -4px) rotate(8deg);
 }
 
-.document-stack:hover span:nth-child(3) {
+.document-stack:hover button:nth-child(3) {
   transform: translate(-54px, 116px) rotate(-6deg);
 }
 
@@ -3292,6 +3407,10 @@
   .team-roster {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 28px;
+  }
+
+  .partner-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .team-roster article:nth-child(2n) {
@@ -3551,8 +3670,11 @@
   }
 
   .case-feature h3 {
-    font-size: clamp(32px, 10.5vw, 46px);
-    line-height: 1.04;
+    font-size: clamp(28px, 8vw, 40px);
+    line-height: 1.06;
+    overflow-wrap: normal;
+    word-break: normal;
+    hyphens: none;
   }
 
   .case-feature li {
@@ -3601,7 +3723,11 @@
   }
 
   .case-strips h3 {
-    font-size: clamp(21px, 7vw, 30px);
+    font-size: clamp(20px, 6.2vw, 27px);
+    line-height: 1.08;
+    overflow-wrap: normal;
+    word-break: normal;
+    hyphens: none;
   }
 
   .prhub-services-list article,
@@ -3662,6 +3788,39 @@
     overflow: hidden;
   }
 
+  .partner-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .partner-grid a {
+    min-height: 172px;
+    padding: 22px;
+    border-radius: 24px;
+  }
+
+  .partner-logo {
+    width: min(100%, 190px);
+    height: 64px;
+  }
+
+  .partner-grid a:nth-child(3) .partner-logo {
+    height: 56px;
+  }
+
+  .partner-grid a:nth-child(3) .partner-logo img {
+    max-height: 48px;
+  }
+
+  .partner-grid strong {
+    margin-top: 24px;
+    font-size: clamp(22px, 7vw, 30px);
+  }
+
+  .partner-grid a:nth-child(3) strong {
+    margin-top: 34px;
+  }
+
   .prhub-awards div {
     min-height: auto;
   }
@@ -3690,7 +3849,7 @@
     content: none;
   }
 
-  .prhub-awards .document-stack span {
+  .prhub-awards .document-stack button {
     position: relative;
     width: 100%;
     max-width: 100%;
@@ -3709,12 +3868,12 @@
     animation: none;
   }
 
-  .prhub-awards .document-stack span:nth-child(1),
-  .prhub-awards .document-stack span:nth-child(2),
-  .prhub-awards .document-stack span:nth-child(3),
-  .prhub-awards .document-stack:hover span:nth-child(1),
-  .prhub-awards .document-stack:hover span:nth-child(2),
-  .prhub-awards .document-stack:hover span:nth-child(3) {
+  .prhub-awards .document-stack button:nth-child(1),
+  .prhub-awards .document-stack button:nth-child(2),
+  .prhub-awards .document-stack button:nth-child(3),
+  .prhub-awards .document-stack:hover button:nth-child(1),
+  .prhub-awards .document-stack:hover button:nth-child(2),
+  .prhub-awards .document-stack:hover button:nth-child(3) {
     position: relative;
     width: 100%;
     color: #090909;
