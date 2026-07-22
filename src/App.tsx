@@ -1,12 +1,18 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, type CSSProperties, type TouchEvent, type WheelEvent } from 'react';
 import * as THREE from 'three';
 import aeiLogo from './assets/client-logos/aei.png';
+import bricsTodayMediaLogo from './assets/media-logos/brics-today.svg';
+import forbesMediaLogo from './assets/media-logos/forbes.svg';
+import kommersantMediaLogo from './assets/media-logos/kommersant.svg';
 import lazovskiyLogo from './assets/client-logos/lazovskiy.png';
 import promplanLogo from './assets/client-logos/promplan.svg';
 import prixKnightSvg from './assets/prix-knight.svg?raw';
+import rbkMediaLogo from './assets/media-logos/rbk.svg';
 import russianIndustrialistLogo from './assets/client-logos/russian-industrialist.png';
 import sdelanoKhvLogo from './assets/client-logos/sdelano-khv.svg';
 import tamashiLogo from './assets/client-logos/tamashi.svg';
+import vcMediaLogo from './assets/media-logos/vc.png';
+import vedomostiMediaLogo from './assets/media-logos/vedomosti.svg';
 import vbiLogo from './assets/client-logos/vbi.svg';
 import './App.css';
 
@@ -419,7 +425,14 @@ const prhubApproach = [
   ['06', 'Ежемесячный отчёт', 'Показываем публикации, охваты, статус задач и следующие действия.'],
 ];
 
-const prhubMedia = ['РБК', 'Forbes', 'Ведомости', 'Коммерсантъ', 'BRICS Today', 'VC.ru'];
+const prhubMedia = [
+  { name: 'РБК', logo: rbkMediaLogo, variant: 'rbk' },
+  { name: 'Forbes', logo: forbesMediaLogo, variant: 'forbes' },
+  { name: 'Ведомости', logo: vedomostiMediaLogo, variant: 'vedomosti' },
+  { name: 'Коммерсантъ', logo: kommersantMediaLogo, variant: 'kommersant' },
+  { name: 'BRICS Today', logo: bricsTodayMediaLogo, variant: 'brics-today' },
+  { name: 'VC.ru', logo: vcMediaLogo, variant: 'vc' },
+];
 
 const prhubTestimonials = [
   {
@@ -460,13 +473,55 @@ const prhubTestimonials = [
   },
 ];
 
+const eventVideos = [
+  {
+    title: 'PRIX CLUB',
+    subtitle: 'Интервью и мероприятия',
+    src: '/events/prix.mp4',
+    poster: '/events/prix-poster.jpg',
+  },
+  {
+    title: 'РоссПром 2025 / АЭИ',
+    subtitle: 'Мероприятие и медиа-сопровождение',
+    src: '/events/rosprom-aei-2025.mp4',
+    poster: '/events/rosprom-aei-2025-poster.jpg',
+  },
+  {
+    title: 'МДТ 2025',
+    subtitle: 'Интервью и мероприятия',
+    src: '/events/mdt-2025-m3-new.mp4',
+    poster: '/events/mdt-2025-m3-new-poster.jpg',
+  },
+  {
+    title: 'Евгения Ежикова',
+    subtitle: 'Интервью и мероприятия',
+    src: '/events/evgeniya-ezhikova.mp4',
+    poster: '/events/evgeniya-ezhikova-poster.jpg',
+  },
+  {
+    title: 'Алексей Мостовщиков',
+    subtitle: 'Интервью и мероприятия',
+    src: '/events/alexey-mostovshchikov.mp4',
+    poster: '/events/alexey-mostovshchikov-poster.jpg',
+  },
+];
+
 function PrhubInspiredSite() {
   const [activeCaseIndex, setActiveCaseIndex] = useState(0);
   const [caseDirection, setCaseDirection] = useState<'next' | 'prev'>('next');
   const [caseAutoDelay, setCaseAutoDelay] = useState(5000);
+  const [activeEventIndex, setActiveEventIndex] = useState(0);
+  const [caseWindowHeight, setCaseWindowHeight] = useState<number | null>(null);
+  const caseStripsRef = useRef<HTMLDivElement | null>(null);
+  const eventTouchStartRef = useRef<{ x: number; y: number } | null>(null);
+  const eventWheelLockRef = useRef(0);
   const testimonialScrollerRef = useRef<HTMLDivElement | null>(null);
   const activeCase = portfolio[activeCaseIndex];
   const secondaryCases = portfolio.filter((_, index) => index !== activeCaseIndex);
+  const activeEvent = eventVideos[activeEventIndex];
+  const caseFeatureStyle = caseWindowHeight
+    ? ({ '--case-window-height': `${caseWindowHeight}px` } as CSSProperties)
+    : undefined;
   const selectCase = (index: number) => {
     setCaseDirection(index > activeCaseIndex ? 'next' : 'prev');
     setCaseAutoDelay(10000);
@@ -487,6 +542,67 @@ function PrhubInspiredSite() {
       behavior: 'smooth',
     });
   };
+  const selectEvent = (direction: -1 | 1) => {
+    setActiveEventIndex((currentIndex) => {
+      const nextIndex = currentIndex + direction;
+
+      if (nextIndex < 0) {
+        return eventVideos.length - 1;
+      }
+
+      if (nextIndex >= eventVideos.length) {
+        return 0;
+      }
+
+      return nextIndex;
+    });
+  };
+  const handleEventWheel = (event: WheelEvent<HTMLDivElement>) => {
+    const horizontalDelta =
+      Math.abs(event.deltaX) >= Math.abs(event.deltaY) ? event.deltaX : event.shiftKey ? event.deltaY : 0;
+
+    if (Math.abs(horizontalDelta) < 24) {
+      return;
+    }
+
+    event.preventDefault();
+
+    const now = Date.now();
+
+    if (now - eventWheelLockRef.current < 650) {
+      return;
+    }
+
+    eventWheelLockRef.current = now;
+    selectEvent(horizontalDelta > 0 ? 1 : -1);
+  };
+  const handleEventTouchStart = (event: TouchEvent<HTMLDivElement>) => {
+    const touch = event.touches[0];
+
+    if (!touch) {
+      return;
+    }
+
+    eventTouchStartRef.current = { x: touch.clientX, y: touch.clientY };
+  };
+  const handleEventTouchEnd = (event: TouchEvent<HTMLDivElement>) => {
+    const start = eventTouchStartRef.current;
+    const touch = event.changedTouches[0];
+    eventTouchStartRef.current = null;
+
+    if (!start || !touch) {
+      return;
+    }
+
+    const deltaX = touch.clientX - start.x;
+    const deltaY = touch.clientY - start.y;
+
+    if (Math.abs(deltaX) < 48 || Math.abs(deltaX) < Math.abs(deltaY) * 1.25) {
+      return;
+    }
+
+    selectEvent(deltaX < 0 ? 1 : -1);
+  };
 
   useEffect(() => {
     const timeoutId = window.setTimeout(() => {
@@ -497,6 +613,29 @@ function PrhubInspiredSite() {
 
     return () => window.clearTimeout(timeoutId);
   }, [activeCaseIndex, caseAutoDelay]);
+
+  useEffect(() => {
+    const element = caseStripsRef.current;
+
+    if (!element) {
+      return undefined;
+    }
+
+    const updateHeight = () => {
+      setCaseWindowHeight(Math.ceil(element.getBoundingClientRect().height));
+    };
+
+    updateHeight();
+
+    const resizeObserver = new ResizeObserver(updateHeight);
+    resizeObserver.observe(element);
+    window.addEventListener('resize', updateHeight);
+
+    return () => {
+      resizeObserver.disconnect();
+      window.removeEventListener('resize', updateHeight);
+    };
+  }, [activeCaseIndex]);
 
   return (
     <main className="prhub-page">
@@ -545,7 +684,9 @@ function PrhubInspiredSite() {
       <section className="prhub-marquee" aria-label="Медиа и направления">
         <div>
           {prhubMedia.concat(prhubMedia).map((item, index) => (
-            <span key={`${item}-${index}`}>{item}</span>
+            <span className={`media-logo media-logo-${item.variant}`} key={`${item.name}-${index}`}>
+              <img src={item.logo} alt={item.name} loading="lazy" />
+            </span>
           ))}
         </div>
       </section>
@@ -596,7 +737,7 @@ function PrhubInspiredSite() {
         </div>
 
         <div className="case-editorial">
-          <article className={`case-feature case-feature-${caseDirection}`} key={activeCase.company}>
+          <article className={`case-feature case-feature-${caseDirection}`} key={activeCase.company} style={caseFeatureStyle}>
             <div className="case-feature-topline">
               <CaseLogoMark logo={activeCase.logo} />
               <span className="case-feature-badge">Featured media room</span>
@@ -610,7 +751,7 @@ function PrhubInspiredSite() {
             </ul>
           </article>
 
-          <div className="case-strips">
+          <div className="case-strips" ref={caseStripsRef}>
             {secondaryCases.map((item) => {
               const originalIndex = portfolio.findIndex((caseItem) => caseItem.company === item.company);
 
@@ -702,6 +843,51 @@ function PrhubInspiredSite() {
               <small>{partner.href.replace(/^https?:\/\//, '').replace(/\/$/, '')}</small>
             </a>
           ))}
+        </div>
+      </section>
+
+      <section className="prhub-events" id="prhub-events" aria-labelledby="prhub-events-title">
+        <div className="prhub-section-title">
+          <p>Events</p>
+          <h2 id="prhub-events-title">Интервью и мероприятия</h2>
+        </div>
+
+        <div className="event-widget" onTouchEnd={handleEventTouchEnd} onTouchStart={handleEventTouchStart} onWheel={handleEventWheel}>
+          <div className="event-player">
+            <video key={activeEvent.src} controls preload="metadata" poster={activeEvent.poster} playsInline>
+              <source src={activeEvent.src} type="video/mp4" />
+            </video>
+          </div>
+
+          <div className="event-panel">
+            <span>
+              {String(activeEventIndex + 1).padStart(2, '0')} / {String(eventVideos.length).padStart(2, '0')}
+            </span>
+            <h3>{activeEvent.title}</h3>
+            <p>{activeEvent.subtitle}</p>
+
+            <div className="event-controls">
+              <button type="button" onClick={() => selectEvent(-1)} aria-label="Предыдущее видео">
+                ←
+              </button>
+              <button type="button" onClick={() => selectEvent(1)} aria-label="Следующее видео">
+                →
+              </button>
+            </div>
+
+            <div className="event-dots" aria-label="Выбор видео">
+              {eventVideos.map((event, index) => (
+                <button
+                  aria-label={`Открыть видео ${event.title}`}
+                  aria-pressed={index === activeEventIndex}
+                  className={index === activeEventIndex ? 'is-active' : undefined}
+                  key={event.src}
+                  type="button"
+                  onClick={() => setActiveEventIndex(index)}
+                />
+              ))}
+            </div>
+          </div>
         </div>
       </section>
 

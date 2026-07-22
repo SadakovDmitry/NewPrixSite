@@ -844,6 +844,7 @@
 .prhub-team,
 .prhub-awards,
 .prhub-contact,
+.prhub-events,
 .prhub-footer {
   width: min(1160px, calc(100% - 40px));
   margin: 0 auto;
@@ -1144,7 +1145,7 @@
 
 .prhub-marquee span {
   display: inline-flex;
-  width: 184px;
+  width: 204px;
   aspect-ratio: 1;
   align-items: center;
   justify-content: center;
@@ -1157,6 +1158,29 @@
   background: #ffffff;
 }
 
+.prhub-marquee img {
+  display: block;
+  width: auto;
+  height: auto;
+  max-width: 78%;
+  max-height: 58px;
+  object-fit: contain;
+}
+
+.media-logo-kommersant img {
+  max-width: 90%;
+}
+
+.media-logo-vedomosti img,
+.media-logo-brics-today img {
+  max-width: 88%;
+}
+
+.media-logo-rbk img,
+.media-logo-vc img {
+  max-width: 72%;
+}
+
 .prhub-about,
 .prhub-services,
 .prhub-cases,
@@ -1165,7 +1189,8 @@
 .prhub-partners,
 .prhub-team,
 .prhub-awards,
-.prhub-contact {
+.prhub-contact,
+.prhub-events {
   position: relative;
   isolation: isolate;
   padding: 96px 0;
@@ -1178,7 +1203,8 @@
 .prhub-approach::before,
 .prhub-partners::before,
 .prhub-team::before,
-.prhub-awards::before {
+.prhub-awards::before,
+.prhub-events::before {
   content: "";
   position: absolute;
   z-index: -1;
@@ -2143,6 +2169,126 @@
   background: #ffffff;
 }
 
+.prhub-events::before {
+  right: 8%;
+  bottom: 46px;
+  width: min(520px, 48vw);
+  height: 220px;
+  background: linear-gradient(90deg, rgba(0, 119, 255, 0.16), rgba(255, 205, 67, 0.2));
+}
+
+.event-widget {
+  display: grid;
+  grid-template-columns: minmax(0, 1.25fr) minmax(280px, 0.75fr);
+  gap: 18px;
+  align-items: stretch;
+  overscroll-behavior-x: contain;
+  touch-action: pan-y;
+}
+
+.event-player {
+  min-height: 420px;
+  display: grid;
+  place-items: center;
+  padding: 12px;
+  border: 1px solid rgba(9, 9, 9, 0.12);
+  border-radius: 34px;
+  background:
+    radial-gradient(circle at 16% 12%, rgba(255, 104, 72, 0.2), transparent 34%),
+    #090909;
+  box-shadow: 0 24px 70px rgba(9, 9, 9, 0.12);
+  overflow: hidden;
+}
+
+.event-player video {
+  display: block;
+  width: 100%;
+  max-height: 620px;
+  aspect-ratio: 16 / 9;
+  object-fit: contain;
+  border-radius: 24px;
+  background: #090909;
+}
+
+.event-panel {
+  min-height: 420px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 28px;
+  color: #090909;
+  border: 1px solid rgba(9, 9, 9, 0.12);
+  border-radius: 34px;
+  background:
+    radial-gradient(circle at 84% 18%, rgba(255, 205, 67, 0.3), transparent 30%),
+    rgba(255, 255, 255, 0.76);
+  box-shadow: 0 18px 54px rgba(9, 9, 9, 0.06);
+}
+
+.event-panel > span {
+  color: rgba(9, 9, 9, 0.42);
+  font-size: 12px;
+  font-weight: 820;
+}
+
+.event-panel h3 {
+  margin: auto 0 10px;
+  font-size: clamp(28px, 3.4vw, 48px);
+  line-height: 1.02;
+}
+
+.event-panel p {
+  margin: 0;
+  color: rgba(9, 9, 9, 0.62);
+  font-size: 15px;
+  line-height: 1.35;
+}
+
+.event-controls {
+  display: flex;
+  gap: 8px;
+  margin-top: 34px;
+}
+
+.event-controls button {
+  width: 56px;
+  height: 46px;
+  color: #090909;
+  font: inherit;
+  font-size: 18px;
+  border: 1px solid rgba(9, 9, 9, 0.12);
+  border-radius: 999px;
+  background: #ffffff;
+  cursor: pointer;
+}
+
+.event-controls button:hover,
+.event-controls button:focus-visible {
+  border-color: rgba(9, 9, 9, 0.26);
+  outline: none;
+}
+
+.event-dots {
+  display: flex;
+  gap: 8px;
+  margin-top: 20px;
+}
+
+.event-dots button {
+  width: 10px;
+  height: 10px;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background: rgba(9, 9, 9, 0.18);
+  cursor: pointer;
+}
+
+.event-dots button.is-active {
+  width: 28px;
+  background: #090909;
+}
+
 .prhub-footer {
   justify-content: space-between;
   gap: 18px;
@@ -2379,6 +2525,8 @@
 
 .case-feature {
   position: relative;
+  box-sizing: border-box;
+  height: var(--case-window-height, auto);
   min-height: 560px;
   display: flex;
   flex-direction: column;
@@ -2391,9 +2539,14 @@
     radial-gradient(circle at 20% 18%, rgba(255, 104, 72, 0.86), transparent 28%),
     radial-gradient(circle at 74% 30%, rgba(80, 176, 255, 0.62), transparent 30%),
     linear-gradient(135deg, #0a0a0b, #34343a);
-  overflow: hidden;
+  overflow: hidden auto;
+  overscroll-behavior: contain;
   transform-origin: 120% 50%;
   animation: case-feature-in-next 760ms cubic-bezier(0.2, 0.9, 0.2, 1);
+}
+
+.case-feature::-webkit-scrollbar {
+  width: 0;
 }
 
 .case-feature-prev {
@@ -3308,6 +3461,7 @@
   .prhub-team,
   .prhub-awards,
   .prhub-contact,
+  .prhub-events,
   .prhub-footer {
     width: min(calc(100% - 32px), 760px);
   }
@@ -3417,6 +3571,19 @@
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
+  .event-widget {
+    grid-template-columns: 1fr;
+  }
+
+  .event-player,
+  .event-panel {
+    min-height: auto;
+  }
+
+  .event-player video {
+    max-height: 560px;
+  }
+
   .team-roster article:nth-child(2n) {
     --team-y: 0px;
   }
@@ -3484,6 +3651,7 @@
   .prhub-team,
   .prhub-awards,
   .prhub-contact,
+  .prhub-events,
   .prhub-footer {
     width: calc(100% - 28px);
   }
@@ -3572,8 +3740,17 @@
   }
 
   .prhub-marquee span {
-    width: 128px;
-    font-size: 15px;
+    width: 148px;
+  }
+
+  .prhub-marquee img {
+    max-height: 44px;
+  }
+
+  .media-logo-kommersant img,
+  .media-logo-vedomosti img,
+  .media-logo-brics-today img {
+    max-width: 88%;
   }
 
   .prhub-stat-row,
@@ -3955,13 +4132,48 @@
   .prhub-approach,
   .prhub-team,
   .prhub-awards,
-  .prhub-contact {
+  .prhub-contact,
+  .prhub-events {
     padding: 72px 0;
   }
 
   .prhub-contact {
     padding: 34px 22px;
     border-radius: 30px;
+  }
+
+  .event-widget {
+    gap: 12px;
+  }
+
+  .event-player {
+    padding: 8px;
+    border-radius: 28px;
+  }
+
+  .event-player video {
+    aspect-ratio: 9 / 16;
+    max-height: 68vh;
+    border-radius: 22px;
+  }
+
+  .event-panel {
+    min-height: auto;
+    padding: 22px;
+    border-radius: 28px;
+  }
+
+  .event-panel h3 {
+    margin: 34px 0 8px;
+    font-size: clamp(24px, 8vw, 34px);
+  }
+
+  .event-controls {
+    margin-top: 24px;
+  }
+
+  .event-controls button {
+    flex: 1 1 0;
   }
 
   .testimonial-actions {
