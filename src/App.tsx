@@ -1,4 +1,12 @@
-import { useEffect, useRef, useState, type CSSProperties, type TouchEvent, type WheelEvent } from 'react';
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  type CSSProperties,
+  type TouchEvent,
+  type WheelEvent,
+} from 'react';
 import * as THREE from 'three';
 import aeiLogo from './assets/client-logos/aei.png';
 import bricsTodayMediaLogo from './assets/media-logos/brics-today.svg';
@@ -120,6 +128,24 @@ const portfolio = [
       'Коммуникация с ТАСС, РИА Новости и АиФ',
       'Акцент на регионе, культуре и пространстве',
     ],
+  },
+];
+
+const mobileCaseLoop = [
+  {
+    item: portfolio[portfolio.length - 1],
+    originalIndex: portfolio.length - 1,
+    clone: 'start',
+  },
+  ...portfolio.map((item, originalIndex) => ({
+    item,
+    originalIndex,
+    clone: null,
+  })),
+  {
+    item: portfolio[0],
+    originalIndex: 0,
+    clone: 'end',
   },
 ];
 
@@ -525,7 +551,7 @@ const eventVideos = [
     poster: '/events/evgeniya-ezhikova-poster.jpg',
   },
   {
-    title: 'Алексей Мостовщиков',
+    title: 'Интервью участника Роспрома',
     subtitle: 'Интервью и мероприятия',
     src: '/events/alexey-mostovshchikov.mp4',
     poster: '/events/alexey-mostovshchikov-poster.jpg',
@@ -538,8 +564,11 @@ function PrhubInspiredSite() {
   const [caseWindowHeight, setCaseWindowHeight] = useState<number | null>(null);
   const caseFeatureStageRef = useRef<HTMLDivElement | null>(null);
   const caseStripsRef = useRef<HTMLDivElement | null>(null);
+  const caseStripsMeasureRef = useRef<HTMLDivElement | null>(null);
   const caseMobileCarouselRef = useRef<HTMLDivElement | null>(null);
   const caseMobileScrollFrameRef = useRef<number | null>(null);
+  const caseMobileLoopTimerRef = useRef<number | null>(null);
+  const caseMobileInitializedRef = useRef(false);
   const eventTouchStartRef = useRef<{ x: number; y: number } | null>(null);
   const eventWheelLockRef = useRef(0);
   const testimonialScrollerRef = useRef<HTMLDivElement | null>(null);
@@ -561,11 +590,27 @@ function PrhubInspiredSite() {
       });
     }
   };
-  const updateMobileCaseEffects = () => {
+  const getMobileCaseScrollLeft = useCallback(
+    (carousel: HTMLElement, slide: HTMLElement) =>
+      slide.offsetLeft - (carousel.clientWidth - slide.offsetWidth) / 2,
+    [],
+  );
+  const updateMobileCaseEffects = useCallback(() => {
     const carousel = caseMobileCarouselRef.current;
 
-    if (!carousel) {
+    if (!carousel || carousel.clientWidth === 0) {
       return;
+    }
+
+    if (!caseMobileInitializedRef.current) {
+      const firstRealSlide = carousel.querySelector<HTMLElement>(
+        '.case-mobile-slide[data-case-index="0"]:not([data-case-clone])',
+      );
+
+      if (firstRealSlide) {
+        carousel.scrollLeft = getMobileCaseScrollLeft(carousel, firstRealSlide);
+        caseMobileInitializedRef.current = true;
+      }
     }
 
     const carouselRect = carousel.getBoundingClientRect();
@@ -588,25 +633,77 @@ function PrhubInspiredSite() {
 
       if (Math.abs(rawDistance) < nearestDistance) {
         nearestDistance = Math.abs(rawDistance);
-        nearestIndex = index;
+        nearestIndex = Number(slide.dataset.caseIndex ?? index);
       }
     });
 
     setActiveCaseIndex((currentIndex) => (currentIndex === nearestIndex ? currentIndex : nearestIndex));
-  };
-  const handleMobileCaseScroll = () => {
-    if (caseMobileScrollFrameRef.current !== null) {
+  }, [getMobileCaseScrollLeft]);
+  const normalizeMobileCaseLoop = () => {
+    const carousel = caseMobileCarouselRef.current;
+
+    if (!carousel || carousel.clientWidth === 0) {
       return;
     }
 
-    caseMobileScrollFrameRef.current = window.requestAnimationFrame(() => {
-      caseMobileScrollFrameRef.current = null;
-      updateMobileCaseEffects();
+    const carouselRect = carousel.getBoundingClientRect();
+    const carouselCenter = carouselRect.left + carouselRect.width / 2;
+    const slides = Array.from(carousel.querySelectorAll<HTMLElement>('.case-mobile-slide'));
+    const nearestSlide = slides.reduce<HTMLElement | null>((nearest, slide) => {
+      if (!nearest) {
+        return slide;
+      }
+
+      const slideCenter = slide.getBoundingClientRect().left + slide.getBoundingClientRect().width / 2;
+      const nearestRect = nearest.getBoundingClientRect();
+      const nearestCenter = nearestRect.left + nearestRect.width / 2;
+
+      return Math.abs(slideCenter - carouselCenter) < Math.abs(nearestCenter - carouselCenter)
+        ? slide
+        : nearest;
+    }, null);
+
+    if (!nearestSlide?.dataset.caseClone) {
+      return;
+    }
+
+    const originalIndex = nearestSlide.dataset.caseIndex;
+    const realSlide = carousel.querySelector<HTMLElement>(
+      `.case-mobile-slide[data-case-index="${originalIndex}"]:not([data-case-clone])`,
+    );
+
+    if (!realSlide) {
+      return;
+    }
+
+    carousel.scrollTo({
+      left: getMobileCaseScrollLeft(carousel, realSlide),
+      behavior: 'auto',
     });
+    window.requestAnimationFrame(updateMobileCaseEffects);
+  };
+  const handleMobileCaseScroll = () => {
+    if (caseMobileScrollFrameRef.current === null) {
+      caseMobileScrollFrameRef.current = window.requestAnimationFrame(() => {
+        caseMobileScrollFrameRef.current = null;
+        updateMobileCaseEffects();
+      });
+    }
+
+    if (caseMobileLoopTimerRef.current !== null) {
+      window.clearTimeout(caseMobileLoopTimerRef.current);
+    }
+
+    caseMobileLoopTimerRef.current = window.setTimeout(() => {
+      caseMobileLoopTimerRef.current = null;
+      normalizeMobileCaseLoop();
+    }, 140);
   };
   const scrollToMobileCase = (index: number) => {
     const carousel = caseMobileCarouselRef.current;
-    const slide = carousel?.querySelectorAll<HTMLElement>('.case-mobile-slide')[index];
+    const slide = carousel?.querySelector<HTMLElement>(
+      `.case-mobile-slide[data-case-index="${index}"]:not([data-case-clone])`,
+    );
 
     slide?.scrollIntoView({
       behavior: 'smooth',
@@ -693,26 +790,42 @@ function PrhubInspiredSite() {
 
   useEffect(() => {
     const element = caseStripsRef.current;
+    const measurer = caseStripsMeasureRef.current;
 
-    if (!element) {
+    if (!element || !measurer) {
       return undefined;
     }
 
     const updateHeight = () => {
-      setCaseWindowHeight(Math.ceil(element.getBoundingClientRect().height));
+      if (window.matchMedia('(max-width: 620px)').matches) {
+        setCaseWindowHeight(null);
+        return;
+      }
+
+      measurer.style.width = `${element.getBoundingClientRect().width}px`;
+
+      const heights = Array.from(
+        measurer.querySelectorAll<HTMLElement>('.case-strips-measure-set'),
+        (set) => set.getBoundingClientRect().height,
+      );
+      const nextHeight = Math.ceil(Math.max(0, ...heights));
+
+      setCaseWindowHeight((currentHeight) => (currentHeight === nextHeight ? currentHeight : nextHeight));
     };
 
     updateHeight();
 
     const resizeObserver = new ResizeObserver(updateHeight);
     resizeObserver.observe(element);
+    resizeObserver.observe(measurer);
     window.addEventListener('resize', updateHeight);
+    void document.fonts?.ready.then(updateHeight);
 
     return () => {
       resizeObserver.disconnect();
       window.removeEventListener('resize', updateHeight);
     };
-  }, [activeCaseIndex]);
+  }, []);
 
   useEffect(() => {
     const carousel = caseMobileCarouselRef.current;
@@ -735,8 +848,12 @@ function PrhubInspiredSite() {
       if (caseMobileScrollFrameRef.current !== null) {
         window.cancelAnimationFrame(caseMobileScrollFrameRef.current);
       }
+
+      if (caseMobileLoopTimerRef.current !== null) {
+        window.clearTimeout(caseMobileLoopTimerRef.current);
+      }
     };
-  }, []);
+  }, [updateMobileCaseEffects]);
 
   return (
     <main className="prhub-page">
@@ -856,7 +973,7 @@ function PrhubInspiredSite() {
             </div>
           </div>
 
-          <div className="case-strips" ref={caseStripsRef}>
+          <div className="case-strips case-strips-active" ref={caseStripsRef} style={caseFeatureStyle}>
             {secondaryCases.map((item) => {
               const originalIndex = portfolio.findIndex((caseItem) => caseItem.company === item.company);
 
@@ -881,6 +998,35 @@ function PrhubInspiredSite() {
             })}
           </div>
 
+          <div className="case-strips-measurer" ref={caseStripsMeasureRef} aria-hidden="true">
+            {portfolio.map((activeItem, activeIndex) => (
+              <div className="case-strips case-strips-measure-set" key={activeItem.company}>
+                {portfolio
+                  .filter((_, itemIndex) => itemIndex !== activeIndex)
+                  .map((item) => {
+                    const originalIndex = portfolio.findIndex((caseItem) => caseItem.company === item.company);
+
+                    return (
+                      <div
+                        className={`case-strip-button case-strip-button-${item.logo.variant}`}
+                        key={item.company}
+                      >
+                        <div className="case-strip-heading">
+                          <CaseLogoMark logo={item.logo} />
+                          <div className="case-strip-title">
+                            <span>{String(originalIndex + 1).padStart(2, '0')}</span>
+                            <h3>{item.company}</h3>
+                          </div>
+                        </div>
+                        <p>{item.type}</p>
+                        <small>{item.publications[0]}</small>
+                      </div>
+                    );
+                  })}
+              </div>
+            ))}
+          </div>
+
           <div className="case-mobile-carousel-shell">
             <div
               aria-label="Карусель кейсов"
@@ -889,23 +1035,36 @@ function PrhubInspiredSite() {
               ref={caseMobileCarouselRef}
               onScroll={handleMobileCaseScroll}
             >
-              {portfolio.map((item, index) => (
-                <article
-                  aria-label={`${index + 1} из ${portfolio.length}: ${item.company}`}
-                  className={`case-feature case-mobile-slide case-mobile-slide-${item.logo.variant}${
-                    index === 0 ? ' is-active' : ''
-                  }`}
-                  key={item.company}
-                  style={
-                    {
-                      '--case-slide-depth': index === 0 ? '0' : '1',
-                      '--case-slide-distance': index === 0 ? '0' : '1',
-                    } as CSSProperties
-                  }
-                >
-                  <CaseFeatureContent item={item} />
-                </article>
-              ))}
+              {mobileCaseLoop.map(({ item, originalIndex, clone }, carouselIndex) => {
+                const isFirstRealSlide = originalIndex === 0 && clone === null;
+
+                return (
+                  <article
+                    aria-hidden={clone ? true : undefined}
+                    aria-label={
+                      clone ? undefined : `${originalIndex + 1} из ${portfolio.length}: ${item.company}`
+                    }
+                    className={`case-feature case-mobile-slide case-mobile-slide-${item.logo.variant}${
+                      isFirstRealSlide ? ' is-active' : ''
+                    }`}
+                    data-case-clone={clone ?? undefined}
+                    data-case-index={originalIndex}
+                    key={clone ? `case-loop-${clone}` : item.company}
+                    style={
+                      {
+                        '--case-slide-depth': isFirstRealSlide ? '0' : '1',
+                        '--case-slide-distance': isFirstRealSlide
+                          ? '0'
+                          : carouselIndex < 1
+                            ? '-1'
+                            : '1',
+                      } as CSSProperties
+                    }
+                  >
+                    <CaseFeatureContent item={item} />
+                  </article>
+                );
+              })}
             </div>
 
             <div className="case-mobile-dots" aria-label="Выбор кейса">
