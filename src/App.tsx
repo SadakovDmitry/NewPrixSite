@@ -234,6 +234,32 @@ function CaseLogoMark({ logo }: { logo: CaseLogo }) {
   );
 }
 
+function CaseFeatureContent({ item }: { item: (typeof portfolio)[number] }) {
+  return (
+    <>
+      <div className="case-feature-topline">
+        <CaseLogoMark logo={item.logo} />
+        <span className="case-feature-badge">Featured media room</span>
+      </div>
+      <h3>{item.company}</h3>
+      <p>{item.type}</p>
+      <ul>
+        {item.publications.map((publication) => (
+          <li key={publication}>{publication}</li>
+        ))}
+      </ul>
+    </>
+  );
+}
+
+function ArrowIcon({ direction }: { direction: 'left' | 'right' }) {
+  return (
+    <svg aria-hidden="true" className="nav-arrow" focusable="false" viewBox="0 0 24 24">
+      <path d={direction === 'left' ? 'M15 5 8 12l7 7' : 'm9 5 7 7-7 7'} />
+    </svg>
+  );
+}
+
 function ThreeKnightScene() {
   const mountRef = useRef<HTMLDivElement | null>(null);
 
@@ -508,10 +534,9 @@ const eventVideos = [
 
 function PrhubInspiredSite() {
   const [activeCaseIndex, setActiveCaseIndex] = useState(0);
-  const [caseDirection, setCaseDirection] = useState<'next' | 'prev'>('next');
-  const [caseAutoDelay, setCaseAutoDelay] = useState(5000);
   const [activeEventIndex, setActiveEventIndex] = useState(0);
   const [caseWindowHeight, setCaseWindowHeight] = useState<number | null>(null);
+  const caseFeatureStageRef = useRef<HTMLDivElement | null>(null);
   const caseStripsRef = useRef<HTMLDivElement | null>(null);
   const eventTouchStartRef = useRef<{ x: number; y: number } | null>(null);
   const eventWheelLockRef = useRef(0);
@@ -523,9 +548,16 @@ function PrhubInspiredSite() {
     ? ({ '--case-window-height': `${caseWindowHeight}px` } as CSSProperties)
     : undefined;
   const selectCase = (index: number) => {
-    setCaseDirection(index > activeCaseIndex ? 'next' : 'prev');
-    setCaseAutoDelay(10000);
     setActiveCaseIndex(index);
+
+    if (window.matchMedia('(max-width: 620px)').matches) {
+      window.requestAnimationFrame(() => {
+        caseFeatureStageRef.current?.scrollIntoView({
+          behavior: 'smooth',
+          block: 'start',
+        });
+      });
+    }
   };
   const scrollTestimonials = (direction: -1 | 1) => {
     const scroller = testimonialScrollerRef.current;
@@ -603,16 +635,6 @@ function PrhubInspiredSite() {
 
     selectEvent(deltaX < 0 ? 1 : -1);
   };
-
-  useEffect(() => {
-    const timeoutId = window.setTimeout(() => {
-      setCaseDirection('next');
-      setCaseAutoDelay(5000);
-      setActiveCaseIndex((currentIndex) => (currentIndex + 1) % portfolio.length);
-    }, caseAutoDelay);
-
-    return () => window.clearTimeout(timeoutId);
-  }, [activeCaseIndex, caseAutoDelay]);
 
   useEffect(() => {
     const element = caseStripsRef.current;
@@ -737,19 +759,23 @@ function PrhubInspiredSite() {
         </div>
 
         <div className="case-editorial">
-          <article className={`case-feature case-feature-${caseDirection}`} key={activeCase.company} style={caseFeatureStyle}>
-            <div className="case-feature-topline">
-              <CaseLogoMark logo={activeCase.logo} />
-              <span className="case-feature-badge">Featured media room</span>
-            </div>
-            <h3>{activeCase.company}</h3>
-            <p>{activeCase.type}</p>
-            <ul>
-              {activeCase.publications.map((publication) => (
-                <li key={publication}>{publication}</li>
+          <div className="case-feature-stage" ref={caseFeatureStageRef}>
+            <article
+              className="case-feature"
+              key={activeCase.company}
+              style={caseFeatureStyle}
+            >
+              <CaseFeatureContent item={activeCase} />
+            </article>
+
+            <div className="case-feature-sizer" aria-hidden="true">
+              {portfolio.map((item) => (
+                <article className="case-feature case-feature-size-template" key={item.company}>
+                  <CaseFeatureContent item={item} />
+                </article>
               ))}
-            </ul>
-          </article>
+            </div>
+          </div>
 
           <div className="case-strips" ref={caseStripsRef}>
             {secondaryCases.map((item) => {
@@ -787,10 +813,10 @@ function PrhubInspiredSite() {
         <div className="testimonial-board">
           <div className="testimonial-actions" aria-label="Навигация по отзывам">
             <button type="button" onClick={() => scrollTestimonials(-1)} aria-label="Предыдущий отзыв">
-              ←
+              <ArrowIcon direction="left" />
             </button>
             <button type="button" onClick={() => scrollTestimonials(1)} aria-label="Следующий отзыв">
-              →
+              <ArrowIcon direction="right" />
             </button>
             <a href="mailto:info@prixclub.ru?subject=Отзыв%20о%20PRIX%20CLUB">оставить отзыв</a>
           </div>
@@ -868,10 +894,10 @@ function PrhubInspiredSite() {
 
             <div className="event-controls">
               <button type="button" onClick={() => selectEvent(-1)} aria-label="Предыдущее видео">
-                ←
+                <ArrowIcon direction="left" />
               </button>
               <button type="button" onClick={() => selectEvent(1)} aria-label="Следующее видео">
-                →
+                <ArrowIcon direction="right" />
               </button>
             </div>
 
