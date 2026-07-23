@@ -538,6 +538,8 @@ function PrhubInspiredSite() {
   const [caseWindowHeight, setCaseWindowHeight] = useState<number | null>(null);
   const caseFeatureStageRef = useRef<HTMLDivElement | null>(null);
   const caseStripsRef = useRef<HTMLDivElement | null>(null);
+  const caseMobileCarouselRef = useRef<HTMLDivElement | null>(null);
+  const caseMobileScrollFrameRef = useRef<number | null>(null);
   const eventTouchStartRef = useRef<{ x: number; y: number } | null>(null);
   const eventWheelLockRef = useRef(0);
   const testimonialScrollerRef = useRef<HTMLDivElement | null>(null);
@@ -558,6 +560,59 @@ function PrhubInspiredSite() {
         });
       });
     }
+  };
+  const updateMobileCaseEffects = () => {
+    const carousel = caseMobileCarouselRef.current;
+
+    if (!carousel) {
+      return;
+    }
+
+    const carouselRect = carousel.getBoundingClientRect();
+    const carouselCenter = carouselRect.left + carouselRect.width / 2;
+    const slides = Array.from(carousel.querySelectorAll<HTMLElement>('.case-mobile-slide'));
+    let nearestIndex = 0;
+    let nearestDistance = Number.POSITIVE_INFINITY;
+
+    slides.forEach((slide, index) => {
+      const slideRect = slide.getBoundingClientRect();
+      const slideCenter = slideRect.left + slideRect.width / 2;
+      const rawDistance = (slideCenter - carouselCenter) / Math.max(slideRect.width, 1);
+      const distance = Math.max(-1.25, Math.min(1.25, rawDistance));
+      const depth = Math.min(1, Math.abs(distance));
+
+      slide.style.setProperty('--case-slide-distance', distance.toFixed(3));
+      slide.style.setProperty('--case-slide-depth', depth.toFixed(3));
+      slide.style.zIndex = String(10 - Math.round(depth * 5));
+      slide.classList.toggle('is-active', depth < 0.18);
+
+      if (Math.abs(rawDistance) < nearestDistance) {
+        nearestDistance = Math.abs(rawDistance);
+        nearestIndex = index;
+      }
+    });
+
+    setActiveCaseIndex((currentIndex) => (currentIndex === nearestIndex ? currentIndex : nearestIndex));
+  };
+  const handleMobileCaseScroll = () => {
+    if (caseMobileScrollFrameRef.current !== null) {
+      return;
+    }
+
+    caseMobileScrollFrameRef.current = window.requestAnimationFrame(() => {
+      caseMobileScrollFrameRef.current = null;
+      updateMobileCaseEffects();
+    });
+  };
+  const scrollToMobileCase = (index: number) => {
+    const carousel = caseMobileCarouselRef.current;
+    const slide = carousel?.querySelectorAll<HTMLElement>('.case-mobile-slide')[index];
+
+    slide?.scrollIntoView({
+      behavior: 'smooth',
+      block: 'nearest',
+      inline: 'center',
+    });
   };
   const scrollTestimonials = (direction: -1 | 1) => {
     const scroller = testimonialScrollerRef.current;
@@ -658,6 +713,30 @@ function PrhubInspiredSite() {
       window.removeEventListener('resize', updateHeight);
     };
   }, [activeCaseIndex]);
+
+  useEffect(() => {
+    const carousel = caseMobileCarouselRef.current;
+
+    if (!carousel) {
+      return undefined;
+    }
+
+    const update = () => window.requestAnimationFrame(updateMobileCaseEffects);
+    const resizeObserver = new ResizeObserver(update);
+
+    update();
+    resizeObserver.observe(carousel);
+    window.addEventListener('resize', update);
+
+    return () => {
+      resizeObserver.disconnect();
+      window.removeEventListener('resize', update);
+
+      if (caseMobileScrollFrameRef.current !== null) {
+        window.cancelAnimationFrame(caseMobileScrollFrameRef.current);
+      }
+    };
+  }, []);
 
   return (
     <main className="prhub-page">
@@ -800,6 +879,47 @@ function PrhubInspiredSite() {
                 </button>
               );
             })}
+          </div>
+
+          <div className="case-mobile-carousel-shell">
+            <div
+              aria-label="Карусель кейсов"
+              className="case-mobile-carousel"
+              lang="ru"
+              ref={caseMobileCarouselRef}
+              onScroll={handleMobileCaseScroll}
+            >
+              {portfolio.map((item, index) => (
+                <article
+                  aria-label={`${index + 1} из ${portfolio.length}: ${item.company}`}
+                  className={`case-feature case-mobile-slide case-mobile-slide-${item.logo.variant}${
+                    index === 0 ? ' is-active' : ''
+                  }`}
+                  key={item.company}
+                  style={
+                    {
+                      '--case-slide-depth': index === 0 ? '0' : '1',
+                      '--case-slide-distance': index === 0 ? '0' : '1',
+                    } as CSSProperties
+                  }
+                >
+                  <CaseFeatureContent item={item} />
+                </article>
+              ))}
+            </div>
+
+            <div className="case-mobile-dots" aria-label="Выбор кейса">
+              {portfolio.map((item, index) => (
+                <button
+                  aria-current={index === activeCaseIndex ? 'true' : undefined}
+                  aria-label={`Показать кейс ${item.company}`}
+                  className={index === activeCaseIndex ? 'is-active' : undefined}
+                  key={item.company}
+                  type="button"
+                  onClick={() => scrollToMobileCase(index)}
+                />
+              ))}
+            </div>
           </div>
         </div>
       </section>

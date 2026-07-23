@@ -2540,6 +2540,10 @@
   display: none;
 }
 
+.case-mobile-carousel-shell {
+  display: none;
+}
+
 .case-feature {
   position: relative;
   box-sizing: border-box;
@@ -3826,6 +3830,104 @@
   }
 
   .case-feature-stage,
+  .case-strips {
+    display: none;
+  }
+
+  .case-mobile-carousel-shell {
+    grid-column: 1 / -1;
+    display: grid;
+    gap: 12px;
+    width: calc(100% + 28px);
+    max-width: none;
+    margin-inline: -14px;
+    overflow: hidden;
+  }
+
+  .case-mobile-carousel {
+    display: grid;
+    grid-auto-columns: calc(100vw - 42px);
+    grid-auto-flow: column;
+    gap: 12px;
+    width: 100%;
+    padding: 12px 21px 20px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    overscroll-behavior-x: contain;
+    scroll-padding-inline: 21px;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    touch-action: pan-x pan-y;
+    perspective: 1000px;
+  }
+
+  .case-mobile-carousel::-webkit-scrollbar {
+    display: none;
+  }
+
+  .case-mobile-slide {
+    --case-slide-depth: 1;
+    --case-slide-distance: 1;
+
+    min-width: 0;
+    min-height: 0;
+    align-self: stretch;
+    scroll-snap-align: center;
+    scroll-snap-stop: always;
+    opacity: calc(1 - (var(--case-slide-depth) * 0.38));
+    filter: blur(calc(var(--case-slide-depth) * 3px));
+    transform:
+      perspective(1000px)
+      translateY(calc(var(--case-slide-depth) * 14px))
+      rotateY(calc(var(--case-slide-distance) * -5deg))
+      scale(calc(1 - (var(--case-slide-depth) * 0.08)));
+    transform-origin: center center;
+    animation: none;
+    will-change: transform, filter, opacity;
+    transition:
+      filter 90ms linear,
+      opacity 90ms linear;
+  }
+
+  .case-mobile-slide.is-active {
+    pointer-events: auto;
+  }
+
+  .case-feature.case-mobile-slide-russian-industrialist h3 {
+    font-size: clamp(22px, 6.2vw, 25px);
+    text-wrap: wrap;
+    overflow-wrap: normal;
+    word-break: normal;
+    hyphens: none;
+    -webkit-hyphens: none;
+  }
+
+  .case-mobile-dots {
+    display: flex;
+    min-height: 22px;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+  }
+
+  .case-mobile-dots button {
+    width: 7px;
+    height: 7px;
+    padding: 0;
+    border: 0;
+    border-radius: 999px;
+    background: rgba(9, 9, 9, 0.2);
+    cursor: pointer;
+    transition:
+      width 220ms ease,
+      background 220ms ease;
+  }
+
+  .case-mobile-dots button.is-active {
+    width: 24px;
+    background: #090909;
+  }
+
   .case-feature-sizer {
     display: grid;
   }
